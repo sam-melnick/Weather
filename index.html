@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Today's Weather!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── OpenDyslexic fallback: if Google Fonts CDN fails, use system sans ── */
+        @font-face {
+            font-family: 'OpenDyslexic';
+            src: local('OpenDyslexic');
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* OpenDyslexic primary, fallback to clean sans-serif */
+            font-family: 'OpenDyslexic', 'Comic Sans MS', 'Segoe UI', sans-serif;
+            /* Red-themed gradient background */
+            background: linear-gradient(180deg, #b71c1c 0%, #d32f2f 30%, #e57373 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2a2a2a;
+            /* Wider letter + word spacing helps dyslexia */
+            letter-spacing: 0.04em;
+            word-spacing: 0.12em;
+            line-height: 1.8;
+            font-size: 18px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
+        /* ── Pixel-art decorative border (Minecraft-style) ── */
+        .pixel-border {
+            border: 4px solid #5d4037;
+            box-shadow:
+                inset 0 0 0 2px #8d6e63,
+                4px 4px 0 0 rgba(0,0,0,0.15);
+            image-rendering: pixelated;
+        }
+
+        /* ── Header ── */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 24px;
+            padding: 16px;
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 6px;
+            text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+        }
+
+        .header .date {
+            font-size: 1.15em;
+            opacity: 0.95;
+        }
+
+        .header .updated {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* ── Fun Fact ── */
+        .fun-fact {
+            background: #4caf50;
+            border-radius: 4px;
+            padding: 18px 22px;
+            margin-bottom: 24px;
+            color: white;
+            text-align: center;
+        }
+
+        .fun-fact .label {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+
+        .fun-fact .fact-text {
+            font-size: 1.05em;
+            line-height: 1.8;
+        }
+
+        /* ── Location Cards ── */
+        .location-card {
+            background: #fff8f0;
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .location-card h2 {
+            font-size: 1.4em;
+            margin-bottom: 16px;
+            color: #b71c1c;
+            border-bottom: 4px solid #d32f2f;
+            padding-bottom: 10px;
+        }
+
+        /* ── Lunchtime (the BIG number) ── */
+        .lunchtime-section {
+            text-align: center;
+            /* Warm cream with red accent */
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: 3px solid #ef9a9a;
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 18px;
+        }
+
+        .lunch-label {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #c62828;
+            margin-bottom: 10px;
+        }
+
+        .lunch-icon {
+            font-size: 3.5em;
+            margin: 10px 0;
+        }
+
+        .lunch-temp {
+            font-size: 3.5em;
+            font-weight: 700;
+            color: #b71c1c;
+        }
+
+        .lunch-desc {
+            font-size: 1.15em;
+            color: #555;
+            margin-top: 6px;
+        }
+
+        /* ── Outfit ── */
+        .outfit-section {
+            background: #fff3e0;
+            border: 3px solid #ffcc80;
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin-bottom: 18px;
+        }
+
+        .outfit-label {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #e65100;
+        }
+
+        .outfit-text {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: #4e342e;
+        }
+
+        /* ── Period Cards (Morning/Afternoon/Evening) ── */
+        .periods-section h3,
+        .seven-day-section h3 {
+            font-size: 1.2em;
+            color: #c62828;
+            margin-bottom: 14px;
+        }
+
+        .periods-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .period-card {
+            background: white;
+            border-radius: 4px;
+            padding: 16px;
+            text-align: center;
+            border: 3px solid #e0e0e0;
+        }
+
+        .period-label {
+            font-weight: 700;
+            font-size: 1em;
+            color: #c62828;
+        }
+
+        .period-time {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 8px;
+        }
+
+        .period-icon {
+            font-size: 2.5em;
+            margin: 8px 0;
+        }
+
+        .period-temp {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .period-desc {
+            font-size: 0.95em;
+            color: #666;
+            margin-top: 6px;
+        }
+
+        .precip {
+            font-size: 0.9em;
+            color: #1565c0;
+            margin-top: 8px;
+            font-weight: 700;
+        }
+
+        /* ── 7-Day Cards ── */
+        .seven-day-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .day-card {
+            background: white;
+            border-radius: 4px;
+            padding: 12px 8px;
+            text-align: center;
+            border: 3px solid #e0e0e0;
+        }
+
+        .day-name {
+            font-weight: 700;
+            font-size: 0.9em;
+            color: #c62828;
+            margin-bottom: 6px;
+        }
+
+        .day-icon {
+            font-size: 1.8em;
+            margin: 6px 0;
+        }
+
+        .day-temps {
+            font-size: 1em;
+            margin: 6px 0;
+        }
+
+        .high {
+            color: #c62828;
+            font-weight: 700;
+        }
+
+        .low {
+            color: #1565c0;
+            font-weight: 700;
+        }
+
+        .day-desc {
+            font-size: 0.8em;
+            color: #777;
+            line-height: 1.5;
+        }
+
+        .precip-badge {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1565c0;
+            font-size: 0.8em;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-top: 6px;
+            font-weight: 700;
+        }
+
+        /* ── Alerts ── */
+        .alerts-section {
+            background: #fff9c4;
+            border: 4px solid #fdd835;
+            border-radius: 4px;
+            padding: 16px 20px;
+            margin-top: 14px;
+        }
+
+        .alerts-section h3 {
+            color: #e65100;
+            margin-bottom: 10px;
+            font-size: 1.15em;
+        }
+
+        .alerts-section ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .alerts-section li {
+            padding: 6px 0;
+            font-size: 1em;
+            color: #bf360c;
+            line-height: 1.7;
+        }
+
+        .error {
+            color: #c62828;
+            text-align: center;
+            padding: 20px;
+            font-size: 1.1em;
+        }
+
+        /* ── Footer with pixel pickaxe ── */
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.75);
+            font-size: 0.85em;
+            margin-top: 20px;
+            padding-bottom: 24px;
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 700px) {
+            .seven-day-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .header h1 {
+                font-size: 1.6em;
+            }
+            body {
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
+                font-size: 15px;
+            }
+            .seven-day-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .periods-grid {
+                grid-template-columns: 1fr;
+            }
+            .lunch-temp {
+                font-size: 2.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌤️ Weather Report! 🌤️</h1>
+            <div class="date">Saturday, February 28, 2026</div>
+            <div class="updated">Updated at 09:57 AM ET</div>
+        </div>
+
+        <div class="fun-fact pixel-border">
+            <div class="label">🧠 Cool Fact of the Day!</div>
+            <div class="fact-text">Hailstones can be as big as a baseball! 🧊</div>
+        </div>
+
+        
+        <div class="location-card">
+            <h2>🏙️ Watertown, MA</h2>
+
+            <div class="lunchtime-section">
+                <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
+                <div class="lunch-icon">☀️</div>
+                <div class="lunch-temp">44°F</div>
+                <div class="lunch-desc">Sunny!</div>
+            </div>
+
+            <div class="outfit-section">
+                <div class="outfit-label">👗 What to Wear</div>
+                <div class="outfit-text">🧶 Chilly! Wear a warm jacket. A hat is a good idea too! 🕶️ Wear your sunglasses!</div>
+            </div>
+
+            <div class="periods-section">
+                <h3>Today's Forecast</h3>
+                <div class="periods-grid">
+                    
+                <div class="period-card">
+                    <div class="period-label">🌅 Morning</div>
+                    <div class="period-time">6am–12pm</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">43°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    
+                </div>
+                <div class="period-card">
+                    <div class="period-label">☀️ Afternoon</div>
+                    <div class="period-time">12pm–6pm</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">47°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">💧 1% chance of rain</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-label">🌙 Evening</div>
+                    <div class="period-time">6pm–10pm</div>
+                    <div class="period-icon">☀️</div>
+                    <div class="period-temp">41°F</div>
+                    <div class="period-desc">Sunny!</div>
+                    <div class="precip">💧 2% chance of rain</div>
+                </div>
+                </div>
+            </div>
+
+            <div class="seven-day-section">
+                <h3>📅 Next 7 Days</h3>
+                <div class="seven-day-grid">
+                    
+            <div class="day-card">
+                <div class="day-name">Today</div>
+                <div class="day-icon">☁️</div>
+                <div class="day-temps"><span class="high">47°</span> / <span class="low">26°</span></div>
+                <div class="day-desc">Mostly Sunny</div>
+                
+            </div>
+            <div class="day-card">
+                <div class="day-name">Tomorrow</div>
+                <div class="day-icon">❄️</div>
+                <div class="day-temps"><span class="high">36°</span> / <span class="low">12°</span></div>
+                <div class="day-desc">Light Snow Likely</div>
+                <span class="precip-badge">❄️ 0.7 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Monday</div>
+                <div class="day-icon">☁️</div>
+                <div class="day-temps"><span class="high">26°</span> / <span class="low">10°</span></div>
+                <div class="day-desc">Sunny</div>
+                
+            </div>
+            <div class="day-card">
+                <div class="day-name">Tuesday</div>
+                <div class="day-icon">❄️❄️</div>
+                <div class="day-temps"><span class="high">38°</span> / <span class="low">28°</span></div>
+                <div class="day-desc">Partly Sunny then Chance Light Snow</div>
+                <span class="precip-badge">❄️ 0.9 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Wednesday</div>
+                <div class="day-icon">🌦️</div>
+                <div class="day-temps"><span class="high">42°</span> / <span class="low">30°</span></div>
+                <div class="day-desc">Light Rain Likely</div>
+                <span class="precip-badge">🌧️ 0.1 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Thursday</div>
+                <div class="day-icon">🌫️</div>
+                <div class="day-temps"><span class="high">50°</span> / <span class="low">36°</span></div>
+                <div class="day-desc">Chance Light Rain</div>
+                <span class="precip-badge">💧45%</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Friday</div>
+                <div class="day-icon">🌫️</div>
+                <div class="day-temps"><span class="high">46°</span> / <span class="low">38°</span></div>
+                <div class="day-desc">Chance Light Rain</div>
+                <span class="precip-badge">💧45%</span>
+            </div>
+                </div>
+            </div>
+
+            
+            <div class="alerts-section">
+                <h3>🚨 Heads Up This Week!</h3>
+                <ul><li>❄️ Snow Tomorrow! Maybe a snow day!</li><li>🥶 Very very cold on Monday! Only 10 degrees! Bundle up!</li><li>❄️ Snow on Tuesday! Maybe a snow day!</li></ul>
+            </div>
+        </div>
+        <div class="location-card">
+            <h2>🌲 Naples, ME</h2>
+
+            <div class="lunchtime-section">
+                <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
+                <div class="lunch-icon">☁️</div>
+                <div class="lunch-temp">35–39°F</div>
+                <div class="lunch-desc">Cloudy</div>
+            </div>
+
+            <div class="outfit-section">
+                <div class="outfit-label">👗 What to Wear</div>
+                <div class="outfit-text">🧶 Chilly! Wear a warm jacket. A hat is a good idea too!</div>
+            </div>
+
+            <div class="periods-section">
+                <h3>Today's Forecast</h3>
+                <div class="periods-grid">
+                    
+                <div class="period-card">
+                    <div class="period-label">🌅 Morning</div>
+                    <div class="period-time">6am–12pm</div>
+                    <div class="period-icon">🌫️</div>
+                    <div class="period-temp">36°F</div>
+                    <div class="period-desc">Foggy</div>
+                    <div class="precip">💧 1% chance of rain</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-label">☀️ Afternoon</div>
+                    <div class="period-time">12pm–6pm</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">41°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">💧 5% chance of rain</div>
+                </div>
+                <div class="period-card">
+                    <div class="period-label">🌙 Evening</div>
+                    <div class="period-time">6pm–10pm</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">36°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">💧 1% chance of rain</div>
+                </div>
+                </div>
+            </div>
+
+            <div class="seven-day-section">
+                <h3>📅 Next 7 Days</h3>
+                <div class="seven-day-grid">
+                    
+            <div class="day-card">
+                <div class="day-name">Today</div>
+                <div class="day-icon">🌫️</div>
+                <div class="day-temps"><span class="high">42°</span> / <span class="low">16°</span></div>
+                <div class="day-desc">Partly Sunny</div>
+                
+            </div>
+            <div class="day-card">
+                <div class="day-name">Tomorrow</div>
+                <div class="day-icon">☁️</div>
+                <div class="day-temps"><span class="high">27°</span> / <span class="low">4°</span></div>
+                <div class="day-desc">Light Snow Likely</div>
+                
+            </div>
+            <div class="day-card">
+                <div class="day-name">Monday</div>
+                <div class="day-icon">☁️</div>
+                <div class="day-temps"><span class="high">21°</span> / <span class="low">1°</span></div>
+                <div class="day-desc">Sunny</div>
+                
+            </div>
+            <div class="day-card">
+                <div class="day-name">Tuesday</div>
+                <div class="day-icon">❄️</div>
+                <div class="day-temps"><span class="high">36°</span> / <span class="low">16°</span></div>
+                <div class="day-desc">Mostly Cloudy then Chance Light Snow</div>
+                <span class="precip-badge">❄️ 0.7 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Wednesday</div>
+                <div class="day-icon">❄️</div>
+                <div class="day-temps"><span class="high">44°</span> / <span class="low">20°</span></div>
+                <div class="day-desc">Chance Rain And Snow then Mostly Sunny</div>
+                <span class="precip-badge">❄️ 0.4 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Thursday</div>
+                <div class="day-icon">❄️❄️</div>
+                <div class="day-temps"><span class="high">42°</span> / <span class="low">30°</span></div>
+                <div class="day-desc">Slight Chance Light Snow then Chance Light Rain</div>
+                <span class="precip-badge">❄️ 1.5 in</span>
+            </div>
+            <div class="day-card">
+                <div class="day-name">Friday</div>
+                <div class="day-icon">🌨️</div>
+                <div class="day-temps"><span class="high">40°</span> / <span class="low">30°</span></div>
+                <div class="day-desc">Chance Rain And Snow</div>
+                <span class="precip-badge">❄️ 0.1 in</span>
+            </div>
+                </div>
+            </div>
+
+            
+            <div class="alerts-section">
+                <h3>🚨 Heads Up This Week!</h3>
+                <ul><li>🥶 Very very cold Tomorrow! Only 4 degrees! Bundle up!</li><li>🥶 Very very cold on Monday! Only 1 degrees! Bundle up!</li><li>❄️ Snow on Tuesday! Maybe a snow day!</li><li>❄️ Snow on Wednesday! Maybe a snow day!</li><li>❄️ Snow on Thursday! Maybe a snow day!</li></ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            Data from NOAA + Open-Meteo &bull; Made with ❤️ by Dad
+        </div>
+    </div>
+</body>
+</html>
