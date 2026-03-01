@@ -707,12 +707,14 @@ def generate_html(locations_data, generated_time):
             if d_short:
                 d_desc = d_short
 
-            # Show snow or rain amounts, fall back to % chance
+            # Show precipitation: amount + % chance together
             precip_badge = ""
             if d_snow and d_snow > 0:
-                precip_badge = f'<span class="precip-badge">❄️ {format_precip_short(d_snow, "snow")}</span>'
+                pct = f" ({d_precip}%)" if d_precip and d_precip > 0 else ""
+                precip_badge = f'<span class="precip-badge">❄️ {format_precip_short(d_snow, "snow")}{pct}</span>'
             elif d_rain and d_rain > 0:
-                precip_badge = f'<span class="precip-badge">🌧️ {format_precip_short(d_rain, "rain")}</span>'
+                pct = f" ({d_precip}%)" if d_precip and d_precip > 0 else ""
+                precip_badge = f'<span class="precip-badge">🌧️ {format_precip_short(d_rain, "rain")}{pct}</span>'
             elif d_precip and d_precip > 0:
                 precip_badge = f'<span class="precip-badge">💧{d_precip}%</span>'
 
