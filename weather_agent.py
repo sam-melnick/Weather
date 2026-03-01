@@ -97,6 +97,7 @@ def fetch_open_meteo(lat, lon):
     url = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={lat}&longitude={lon}"
+        f"&current=temperature_2m,weather_code,wind_speed_10m"
         f"&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m,precipitation,snowfall"
         f"&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,precipitation_sum,snowfall_sum,sunrise,sunset"
         f"&temperature_unit=fahrenheit"
@@ -261,8 +262,15 @@ def process_open_meteo(data):
     if not data:
         return None
 
+    current = data.get("current", {})
     hourly = data.get("hourly", {})
     daily = data.get("daily", {})
+
+    # Current temperature
+    current_temp = current.get("temperature_2m")
+    current_code = current.get("weather_code", 0)
+    if current_temp is not None:
+        current_temp = round(current_temp)
 
     times = hourly.get("time", [])
     temps = hourly.get("temperature_2m", [])
@@ -353,6 +361,8 @@ def process_open_meteo(data):
 
     return {
         "source": "Open-Meteo",
+        "current_temp": current_temp,
+        "current_code": current_code,
         "lunch_temp": lunch_temp,
         "lunch_code": lunch_code,
         "periods": period_data,
@@ -370,17 +380,20 @@ def process_noaa(hourly_data, daily_data):
 
     result = {
         "source": "NOAA",
+        "current_temp": None,
+        "current_code": 0,
         "lunch_temp": None,
         "lunch_code": 0,
         "periods": {},
         "seven_day": [],
     }
 
-    # Process hourly for lunchtime and period breakdowns
+    # Process hourly for current temp, lunchtime, and period breakdowns
     if hourly_data:
         periods_list = hourly_data.get("properties", {}).get("periods", [])
         lunch_temps = []
         period_temps = {"morning": [], "afternoon": [], "evening": []}
+        current_hour = now_est.hour
 
         for p in periods_list:
             start = p.get("startTime", "")
@@ -389,6 +402,10 @@ def process_noaa(hourly_data, daily_data):
 
             hour = int(start.split("T")[1].split(":")[0])
             temp = p.get("temperature")
+
+            # Grab current temp from the hour closest to now
+            if hour == current_hour and result["current_temp"] is None:
+                result["current_temp"] = temp
 
             if 11 <= hour <= 12:
                 lunch_temps.append(temp)
@@ -460,12 +477,22 @@ def blend_forecasts(open_meteo, noaa):
         return open_meteo
 
     blended = {
+        "current_temp": None,
+        "current_code": open_meteo.get("current_code", 0),
         "lunch_temp": None,
         "lunch_temp_range": None,
         "lunch_code": open_meteo.get("lunch_code", 0),
         "periods": {},
         "seven_day": [],
     }
+
+    # Blend current temps (prefer Open-Meteo since it has a real "current" endpoint)
+    om_current = open_meteo.get("current_temp")
+    noaa_current = noaa.get("current_temp")
+    if om_current is not None and noaa_current is not None:
+        blended["current_temp"] = round((om_current + noaa_current) / 2)
+    else:
+        blended["current_temp"] = om_current if om_current is not None else noaa_current
 
     # Blend lunchtime temps
     om_lunch = open_meteo.get("lunch_temp")
@@ -544,11 +571,14 @@ def should_alert(seven_day):
         on_day = f"on {d_name}"
 
         snow_in = day.get("snow_inches", 0)
+        precip_prob = day.get("precip_chance", 0)
         if code in (73, 75, 77, 85, 86):
             if snow_in >= 6:
                 alerts.append(f"❄️ Snow {on_day}! Maybe a snow day!")
-            else:
+            elif precip_prob >= 75:
                 alerts.append(f"❄️ Snow {on_day}!")
+            else:
+                alerts.append(f"❄️ Maybe snow {on_day}!")
         elif code in (95, 96, 99):
             alerts.append(f"⛈️ Big storms {on_day}! Stay safe!")
         elif code in (66, 67):
@@ -587,6 +617,21 @@ def generate_html(locations_data, generated_time):
                 <p class="error">Couldn't fetch weather data. Try refreshing!</p>
             </div>"""
             continue
+
+        # Current temp section (always render — JS will update it live)
+        current_temp = data.get("current_temp")
+        current_code = data.get("current_code", 0)
+        current_desc, current_icon = wmo_desc(current_code)
+        cur_temp_display = f"{current_temp}°F" if current_temp is not None else "..."
+        cur_desc_display = current_desc if current_temp is not None else "Loading..."
+        cur_icon_display = current_icon if current_temp is not None else "🌡️"
+        current_html = f"""
+            <div class="current-section" data-lat="{loc['lat']}" data-lon="{loc['lon']}">
+                <div class="current-label">🌡️ Right Now</div>
+                <div class="current-icon">{cur_icon_display}</div>
+                <div class="current-temp">{cur_temp_display}</div>
+                <div class="current-desc">{cur_desc_display}</div>
+            </div>"""
 
         # Lunchtime section
         lunch_temp = data.get("lunch_temp", "?")
@@ -694,6 +739,8 @@ def generate_html(locations_data, generated_time):
         location_cards += f"""
         <div class="location-card">
             <h2>{loc['emoji']} {loc['name']}, {loc['state']}</h2>
+
+            {current_html}
 
             <div class="lunchtime-section">
                 <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
@@ -835,6 +882,36 @@ def generate_html(locations_data, generated_time):
             color: #b71c1c;
             border-bottom: 4px solid #d32f2f;
             padding-bottom: 10px;
+        }}
+
+        /* ── Current Temp (Right Now) ── */
+        .current-section {{
+            text-align: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 3px solid #64b5f6;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }}
+        .current-label {{
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }}
+        .current-icon {{
+            font-size: 2.8em;
+            margin: 8px 0;
+        }}
+        .current-temp {{
+            font-size: 2.8em;
+            font-weight: 800;
+            color: #1565c0;
+        }}
+        .current-desc {{
+            font-size: 1em;
+            color: #1976d2;
+            margin-top: 4px;
         }}
 
         /* ── Lunchtime (the BIG number) ── */
@@ -1105,6 +1182,58 @@ def generate_html(locations_data, generated_time):
             Data from NOAA + Open-Meteo &bull; Made with ❤️ by Dad
         </div>
     </div>
+
+    <script>
+    // WMO weather code to emoji + description (kid-friendly)
+    const wmoMap = {{
+        0: ["Clear sky", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"],
+        3: ["Cloudy", "☁️"], 45: ["Foggy", "🌫️"], 48: ["Icy fog", "🌫️"],
+        51: ["Light drizzle", "🌦️"], 53: ["Drizzle", "🌦️"], 55: ["Heavy drizzle", "🌧️"],
+        61: ["Light rain", "🌦️"], 63: ["Rain", "🌧️"], 65: ["Heavy rain", "🌧️"],
+        66: ["Icy rain", "🧊"], 67: ["Heavy icy rain", "🧊"],
+        71: ["Light snow", "🌨️"], 73: ["Snow", "❄️"], 75: ["Heavy snow", "❄️"],
+        77: ["Snow bits", "🌨️"], 80: ["Light showers", "🌦️"], 81: ["Showers", "🌧️"],
+        82: ["Heavy showers", "🌧️"], 85: ["Light snow showers", "🌨️"],
+        86: ["Heavy snow showers", "❄️"], 95: ["Thunderstorm", "⛈️"],
+        96: ["Thunderstorm + hail", "⛈️"], 99: ["Big thunderstorm + hail", "⛈️"]
+    }};
+
+    function updateCurrentTemps() {{
+        document.querySelectorAll('.current-section').forEach(function(section) {{
+            var lat = section.getAttribute('data-lat');
+            var lon = section.getAttribute('data-lon');
+            if (!lat || !lon) return;
+
+            var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat
+                + '&longitude=' + lon
+                + '&current=temperature_2m,weather_code'
+                + '&temperature_unit=fahrenheit&timezone=America%2FNew_York';
+
+            fetch(url)
+                .then(function(r) {{ return r.json(); }})
+                .then(function(data) {{
+                    if (data && data.current) {{
+                        var temp = Math.round(data.current.temperature_2m);
+                        var code = data.current.weather_code || 0;
+                        var info = wmoMap[code] || ["Unknown", "🌡️"];
+
+                        section.querySelector('.current-temp').textContent = temp + '°F';
+                        section.querySelector('.current-icon').textContent = info[1];
+                        section.querySelector('.current-desc').textContent = info[0];
+                    }}
+                }})
+                .catch(function(e) {{
+                    console.log('Weather fetch error:', e);
+                }});
+        }});
+    }}
+
+    // Update on page load
+    updateCurrentTemps();
+
+    // Auto-refresh every 30 minutes
+    setInterval(updateCurrentTemps, 30 * 60 * 1000);
+    </script>
 </body>
 </html>"""
 
