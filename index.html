@@ -110,6 +110,36 @@
             padding-bottom: 10px;
         }
 
+        /* ── Current Temp (Right Now) ── */
+        .current-section {
+            text-align: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 3px solid #64b5f6;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+        .current-label {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+        .current-icon {
+            font-size: 2.8em;
+            margin: 8px 0;
+        }
+        .current-temp {
+            font-size: 2.8em;
+            font-weight: 800;
+            color: #1565c0;
+        }
+        .current-desc {
+            font-size: 1em;
+            color: #1976d2;
+            margin-top: 4px;
+        }
+
         /* ── Lunchtime (the BIG number) ── */
         .lunchtime-section {
             text-align: center;
@@ -364,7 +394,7 @@
         <div class="header">
             <h1>🌤️ Weather Report! 🌤️</h1>
             <div class="date">Sunday, March 01, 2026</div>
-            <div class="updated">Updated at 07:23 AM ET</div>
+            <div class="updated">Updated at 07:32 AM ET</div>
         </div>
 
         <div class="fun-fact pixel-border">
@@ -376,10 +406,18 @@
         <div class="location-card">
             <h2>🏙️ Watertown, MA</h2>
 
+            
+            <div class="current-section">
+                <div class="current-label">🌡️ Right Now</div>
+                <div class="current-icon">☁️</div>
+                <div class="current-temp">34°F</div>
+                <div class="current-desc">Cloudy</div>
+            </div>
+
             <div class="lunchtime-section">
                 <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
                 <div class="lunch-icon">❄️</div>
-                <div class="lunch-temp">31°F</div>
+                <div class="lunch-temp">30°F</div>
                 <div class="lunch-desc">Snowy!</div>
             </div>
 
@@ -396,16 +434,16 @@
                     <div class="period-label">🌅 Morning</div>
                     <div class="period-time">6am–12pm</div>
                     <div class="period-icon">❄️</div>
-                    <div class="period-temp">35°F</div>
+                    <div class="period-temp">36°F</div>
                     <div class="period-desc">Snowy!</div>
                     <div class="precip">💧 56% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
                     <div class="period-time">12pm–6pm</div>
-                    <div class="period-icon">❄️</div>
+                    <div class="period-icon">☁️</div>
                     <div class="period-temp">32°F</div>
-                    <div class="period-desc">Snowy!</div>
+                    <div class="period-desc">Cloudy</div>
                     <div class="precip">💧 65% chance of rain</div>
                 </div>
                 <div class="period-card">
@@ -424,14 +462,14 @@
                 <div class="seven-day-grid">
                     
             <div class="day-card">
-                <div class="day-name">Today</div>
+                <div class="day-name">Sunday</div>
                 <div class="day-icon">❄️</div>
                 <div class="day-temps"><span class="high">36°</span> / <span class="low">13°</span></div>
                 <div class="day-desc">Light Snow Likely</div>
-                <span class="precip-badge">❄️ 0.3 in</span>
+                <span class="precip-badge">❄️ 0.1 in</span>
             </div>
             <div class="day-card">
-                <div class="day-name">Tomorrow</div>
+                <div class="day-name">Monday</div>
                 <div class="day-icon">⛅</div>
                 <div class="day-temps"><span class="high">28°</span> / <span class="low">12°</span></div>
                 <div class="day-desc">Sunny</div>
@@ -478,17 +516,25 @@
             
             <div class="alerts-section">
                 <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>❄️ Snow Today! Maybe a snow day!</li><li>❄️ Snow on Tuesday! Maybe a snow day!</li></ul>
+                <ul><li>❄️ Snow on Sunday!</li><li>❄️ Snow on Tuesday!</li></ul>
             </div>
         </div>
         <div class="location-card">
             <h2>🌲 Naples, ME</h2>
 
+            
+            <div class="current-section">
+                <div class="current-label">🌡️ Right Now</div>
+                <div class="current-icon">☁️</div>
+                <div class="current-temp">28°F</div>
+                <div class="current-desc">Cloudy</div>
+            </div>
+
             <div class="lunchtime-section">
                 <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
-                <div class="lunch-icon">❄️</div>
+                <div class="lunch-icon">🌨️</div>
                 <div class="lunch-temp">28°F</div>
-                <div class="lunch-desc">Snowy!</div>
+                <div class="lunch-desc">Light snow</div>
             </div>
 
             <div class="outfit-section">
@@ -503,9 +549,9 @@
                 <div class="period-card">
                     <div class="period-label">🌅 Morning</div>
                     <div class="period-time">6am–12pm</div>
-                    <div class="period-icon">❄️</div>
+                    <div class="period-icon">🌨️</div>
                     <div class="period-temp">28°F</div>
-                    <div class="period-desc">Snowy!</div>
+                    <div class="period-desc">Light snow</div>
                     <div class="precip">💧 35% chance of rain</div>
                 </div>
                 <div class="period-card">
@@ -532,14 +578,14 @@
                 <div class="seven-day-grid">
                     
             <div class="day-card">
-                <div class="day-name">Today</div>
-                <div class="day-icon">❄️</div>
+                <div class="day-name">Sunday</div>
+                <div class="day-icon">🌨️</div>
                 <div class="day-temps"><span class="high">29°</span> / <span class="low">4°</span></div>
                 <div class="day-desc">Chance Light Snow</div>
                 <span class="precip-badge">❄️ 0.1 in</span>
             </div>
             <div class="day-card">
-                <div class="day-name">Tomorrow</div>
+                <div class="day-name">Monday</div>
                 <div class="day-icon">☁️</div>
                 <div class="day-temps"><span class="high">24°</span> / <span class="low">4°</span></div>
                 <div class="day-desc">Sunny</div>
@@ -586,7 +632,7 @@
             
             <div class="alerts-section">
                 <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>❄️ Snow Today! Maybe a snow day!</li><li>🥶 Very very cold Tomorrow! Only 4 degrees! Bundle up!</li><li>❄️ Snow on Tuesday! Maybe a snow day!</li><li>❄️ Snow on Wednesday! Maybe a snow day!</li><li>❄️ Snow on Thursday! Maybe a snow day!</li></ul>
+                <ul><li>🥶 Very very cold on Sunday! Only 4 degrees! Bundle up!</li><li>🥶 Very very cold on Monday! Only 4 degrees! Bundle up!</li><li>❄️ Snow on Tuesday!</li><li>❄️ Snow on Wednesday!</li><li>❄️ Snow on Thursday!</li></ul>
             </div>
         </div>
 
