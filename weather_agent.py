@@ -521,14 +521,9 @@ def blend_forecasts(open_meteo, noaa):
 # ─── HTML Generation ─────────────────────────────────────────────────────────
 
 def day_name(date_str):
-    """Convert YYYY-MM-DD to day name."""
+    """Convert YYYY-MM-DD to actual day name (Sunday, Monday, etc.)."""
     try:
         d = datetime.strptime(date_str, "%Y-%m-%d")
-        now = datetime.now()
-        if d.date() == now.date():
-            return "Today"
-        elif d.date() == (now + timedelta(days=1)).date():
-            return "Tomorrow"
         return d.strftime("%A")
     except:
         return date_str
@@ -546,8 +541,7 @@ def should_alert(seven_day):
         short = day.get("short", "")
 
         # Check for notable conditions (simple words!)
-        # Use "today" / "tomorrow" without "on", but "on Wednesday" etc.
-        on_day = d_name if d_name in ("Today", "Tomorrow") else f"on {d_name}"
+        on_day = f"on {d_name}"
 
         snow_in = day.get("snow_inches", 0)
         if code in (73, 75, 77, 85, 86):
