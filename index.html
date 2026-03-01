@@ -394,12 +394,12 @@
         <div class="header">
             <h1>🌤️ Weather Report! 🌤️</h1>
             <div class="date">Sunday, March 01, 2026</div>
-            <div class="updated">Updated at 07:34 AM ET</div>
+            <div class="updated">Updated at 07:41 AM ET</div>
         </div>
 
         <div class="fun-fact pixel-border">
             <div class="label">🧠 Cool Fact of the Day!</div>
-            <div class="fact-text">A rainbow is a full circle. You can only see half from the ground! 🌈</div>
+            <div class="fact-text">A dust devil is a tiny tornado made of dust and hot air! 🌀</div>
         </div>
 
         
@@ -407,7 +407,7 @@
             <h2>🏙️ Watertown, MA</h2>
 
             
-            <div class="current-section">
+            <div class="current-section" data-lat="42.3709" data-lon="-71.1828">
                 <div class="current-label">🌡️ Right Now</div>
                 <div class="current-icon">☁️</div>
                 <div class="current-temp">34°F</div>
@@ -436,7 +436,7 @@
                     <div class="period-icon">❄️</div>
                     <div class="period-temp">36°F</div>
                     <div class="period-desc">Snowy!</div>
-                    <div class="precip">💧 56% chance of rain</div>
+                    <div class="precip">💧 66% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
@@ -444,7 +444,7 @@
                     <div class="period-icon">☁️</div>
                     <div class="period-temp">32°F</div>
                     <div class="period-desc">Cloudy</div>
-                    <div class="precip">💧 65% chance of rain</div>
+                    <div class="precip">💧 66% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">🌙 Evening</div>
@@ -516,14 +516,14 @@
             
             <div class="alerts-section">
                 <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>❄️ Snow on Sunday!</li><li>❄️ Snow on Tuesday!</li></ul>
+                <ul><li>❄️ Maybe snow on Sunday!</li><li>❄️ Snow on Tuesday!</li></ul>
             </div>
         </div>
         <div class="location-card">
             <h2>🌲 Naples, ME</h2>
 
             
-            <div class="current-section">
+            <div class="current-section" data-lat="43.959" data-lon="-70.5878">
                 <div class="current-label">🌡️ Right Now</div>
                 <div class="current-icon">☁️</div>
                 <div class="current-temp">28°F</div>
@@ -552,7 +552,7 @@
                     <div class="period-icon">🌨️</div>
                     <div class="period-temp">28°F</div>
                     <div class="period-desc">Light snow</div>
-                    <div class="precip">💧 35% chance of rain</div>
+                    <div class="precip">💧 30% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
@@ -560,7 +560,7 @@
                     <div class="period-icon">☁️</div>
                     <div class="period-temp">28°F</div>
                     <div class="period-desc">Cloudy</div>
-                    <div class="precip">💧 6% chance of rain</div>
+                    <div class="precip">💧 5% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">🌙 Evening</div>
@@ -632,7 +632,7 @@
             
             <div class="alerts-section">
                 <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>🥶 Very very cold on Sunday! Only 4 degrees! Bundle up!</li><li>🥶 Very very cold on Monday! Only 4 degrees! Bundle up!</li><li>❄️ Snow on Tuesday!</li><li>❄️ Snow on Wednesday!</li><li>❄️ Snow on Thursday!</li></ul>
+                <ul><li>🥶 Very very cold on Sunday! Only 4 degrees! Bundle up!</li><li>🥶 Very very cold on Monday! Only 4 degrees! Bundle up!</li><li>❄️ Maybe snow on Tuesday!</li><li>❄️ Maybe snow on Wednesday!</li><li>❄️ Maybe snow on Thursday!</li></ul>
             </div>
         </div>
 
@@ -640,5 +640,57 @@
             Data from NOAA + Open-Meteo &bull; Made with ❤️ by Dad
         </div>
     </div>
+
+    <script>
+    // WMO weather code to emoji + description (kid-friendly)
+    const wmoMap = {
+        0: ["Clear sky", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"],
+        3: ["Cloudy", "☁️"], 45: ["Foggy", "🌫️"], 48: ["Icy fog", "🌫️"],
+        51: ["Light drizzle", "🌦️"], 53: ["Drizzle", "🌦️"], 55: ["Heavy drizzle", "🌧️"],
+        61: ["Light rain", "🌦️"], 63: ["Rain", "🌧️"], 65: ["Heavy rain", "🌧️"],
+        66: ["Icy rain", "🧊"], 67: ["Heavy icy rain", "🧊"],
+        71: ["Light snow", "🌨️"], 73: ["Snow", "❄️"], 75: ["Heavy snow", "❄️"],
+        77: ["Snow bits", "🌨️"], 80: ["Light showers", "🌦️"], 81: ["Showers", "🌧️"],
+        82: ["Heavy showers", "🌧️"], 85: ["Light snow showers", "🌨️"],
+        86: ["Heavy snow showers", "❄️"], 95: ["Thunderstorm", "⛈️"],
+        96: ["Thunderstorm + hail", "⛈️"], 99: ["Big thunderstorm + hail", "⛈️"]
+    };
+
+    function updateCurrentTemps() {
+        document.querySelectorAll('.current-section').forEach(function(section) {
+            var lat = section.getAttribute('data-lat');
+            var lon = section.getAttribute('data-lon');
+            if (!lat || !lon) return;
+
+            var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat
+                + '&longitude=' + lon
+                + '&current=temperature_2m,weather_code'
+                + '&temperature_unit=fahrenheit&timezone=America%2FNew_York';
+
+            fetch(url)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if (data && data.current) {
+                        var temp = Math.round(data.current.temperature_2m);
+                        var code = data.current.weather_code || 0;
+                        var info = wmoMap[code] || ["Unknown", "🌡️"];
+
+                        section.querySelector('.current-temp').textContent = temp + '°F';
+                        section.querySelector('.current-icon').textContent = info[1];
+                        section.querySelector('.current-desc').textContent = info[0];
+                    }
+                })
+                .catch(function(e) {
+                    console.log('Weather fetch error:', e);
+                });
+        });
+    }
+
+    // Update on page load
+    updateCurrentTemps();
+
+    // Auto-refresh every 30 minutes
+    setInterval(updateCurrentTemps, 30 * 60 * 1000);
+    </script>
 </body>
 </html>
