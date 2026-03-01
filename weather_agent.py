@@ -713,7 +713,7 @@ def generate_html(locations_data, generated_time):
                 precip_badge = f'<span class="precip-badge">❄️ {format_precip_short(d_snow, "snow")}</span>'
             elif d_rain and d_rain > 0:
                 precip_badge = f'<span class="precip-badge">🌧️ {format_precip_short(d_rain, "rain")}</span>'
-            elif d_precip and d_precip > 30:
+            elif d_precip and d_precip > 0:
                 precip_badge = f'<span class="precip-badge">💧{d_precip}%</span>'
 
             seven_day_html += f"""
