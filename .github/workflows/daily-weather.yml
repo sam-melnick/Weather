@@ -3,6 +3,7 @@ name: Daily Weather Update
 on:
   schedule:
     - cron: '30 08 * * *'
+    - cron: '0 16 * * *'
   workflow_dispatch:
 
 jobs:
