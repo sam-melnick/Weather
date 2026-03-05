@@ -197,6 +197,60 @@
             color: #4e342e;
         }
 
+        /* ── Hourly Timeline ── */
+        .hourly-section {
+            margin-bottom: 18px;
+        }
+        .hourly-section h3 {
+            font-size: 1.2em;
+            color: #c62828;
+            margin-bottom: 12px;
+        }
+        .hourly-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 8px 0 12px 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        .hourly-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .hourly-scroll::-webkit-scrollbar-thumb {
+            background: #ef9a9a;
+            border-radius: 3px;
+        }
+        .hour-card {
+            flex: 0 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border: 2px solid #ffca28;
+            border-radius: 4px;
+            padding: 10px 14px;
+            min-width: 75px;
+        }
+        .hour-label {
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #f57f17;
+            margin-bottom: 4px;
+        }
+        .hour-icon {
+            font-size: 1.6em;
+            margin: 4px 0;
+        }
+        .hour-temp {
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #e65100;
+        }
+        .hour-precip {
+            font-size: 0.75em;
+            color: #1565c0;
+            margin-top: 4px;
+        }
+
         /* ── Period Cards (Morning/Afternoon/Evening) ── */
         .periods-section h3,
         .seven-day-section h3 {
@@ -394,12 +448,12 @@
         <div class="header">
             <h1>🌤️ Weather Report! 🌤️</h1>
             <div class="date">Thursday, March 05, 2026</div>
-            <div class="updated">Updated at 05:25 AM ET</div>
+            <div class="updated">Updated at 08:33 AM ET</div>
         </div>
 
         <div class="fun-fact pixel-border">
             <div class="label">🧠 Cool Fact of the Day!</div>
-            <div class="fact-text">Snow golems melt in hot biomes. Real snowmen melt when it gets above 32°F! ☃️</div>
+            <div class="fact-text">A rainbow is a full circle. You can only see half from the ground! 🌈</div>
         </div>
 
         
@@ -409,9 +463,9 @@
             
             <div class="current-section" data-lat="42.3709" data-lon="-71.1828">
                 <div class="current-label">🌡️ Right Now</div>
-                <div class="current-icon">⛅</div>
-                <div class="current-temp">28°F</div>
-                <div class="current-desc">Some clouds</div>
+                <div class="current-icon">☁️</div>
+                <div class="current-temp">35°F</div>
+                <div class="current-desc">Cloudy</div>
             </div>
 
             <div class="lunchtime-section">
@@ -436,23 +490,132 @@
                     <div class="period-icon">☁️</div>
                     <div class="period-temp">42°F</div>
                     <div class="period-desc">Cloudy</div>
-                    <div class="precip">💧 3% chance of rain</div>
+                    <div class="precip">💧 4% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
                     <div class="period-time">12pm–6pm</div>
                     <div class="period-icon">☁️</div>
-                    <div class="period-temp">40°F</div>
+                    <div class="period-temp">41°F</div>
                     <div class="period-desc">Cloudy</div>
-                    <div class="precip">💧 19% chance of rain</div>
+                    <div class="precip">💧 22% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">🌙 Evening</div>
                     <div class="period-time">6pm–10pm</div>
-                    <div class="period-icon">❄️❄️</div>
+                    <div class="period-icon">❄️</div>
                     <div class="period-temp">34°F</div>
-                    <div class="period-desc">Big snow!</div>
-                    <div class="precip">💧 92% chance of rain</div>
+                    <div class="period-desc">Snowy!</div>
+                    <div class="precip">💧 95% chance of rain</div>
+                </div>
+                </div>
+            </div>
+
+            
+            <div class="hourly-section">
+                <h3>⏰ Hour by Hour</h3>
+                <div class="hourly-scroll">
+                <div class="hour-card">
+                    <div class="hour-label">6 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">31°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">7 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">32°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">8 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">37°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">9 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">41°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">10 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">44°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">11 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">46°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">12 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">46°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">1 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">44°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">2 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">40°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">3 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">39°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">4 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">37°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">5 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">35°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">6 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">34°</div>
+                    <div class="hour-precip">💧32%</div>
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">7 PM</div>
+                    <div class="hour-icon">🌦️</div>
+                    <div class="hour-temp">34°</div>
+                    <div class="hour-precip">💧56%</div>
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">8 PM</div>
+                    <div class="hour-icon">🌧️</div>
+                    <div class="hour-temp">35°</div>
+                    <div class="hour-precip">💧80%</div>
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">9 PM</div>
+                    <div class="hour-icon">❄️</div>
+                    <div class="hour-temp">34°</div>
+                    <div class="hour-precip">💧93%</div>
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">10 PM</div>
+                    <div class="hour-icon">❄️</div>
+                    <div class="hour-temp">35°</div>
+                    <div class="hour-precip">💧95%</div>
                 </div>
                 </div>
             </div>
@@ -464,16 +627,16 @@
             <div class="day-card">
                 <div class="day-name">Thursday</div>
                 <div class="day-icon">❄️❄️</div>
-                <div class="day-temps"><span class="high">42°</span> / <span class="low">31°</span></div>
+                <div class="day-temps"><span class="high">42°</span> / <span class="low">32°</span></div>
                 <div class="day-desc">Areas Of Fog</div>
-                <span class="precip-badge">❄️ 1.6 in (94%)</span>
+                <span class="precip-badge">❄️ 0.6 in (95%)</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Friday</div>
                 <div class="day-icon">❄️❄️</div>
                 <div class="day-temps"><span class="high">34°</span> / <span class="low">33°</span></div>
                 <div class="day-desc">Sleet</div>
-                <span class="precip-badge">❄️ 2.5 in (96%)</span>
+                <span class="precip-badge">❄️ 2.8 in (95%)</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Saturday</div>
@@ -485,28 +648,28 @@
             <div class="day-card">
                 <div class="day-name">Sunday</div>
                 <div class="day-icon">🌦️</div>
-                <div class="day-temps"><span class="high">53°</span> / <span class="low">38°</span></div>
+                <div class="day-temps"><span class="high">54°</span> / <span class="low">39°</span></div>
                 <div class="day-desc">Chance Light Rain then Partly Sunny</div>
                 <span class="precip-badge">💧37%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Monday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">60°</span> / <span class="low">40°</span></div>
+                <div class="day-icon">🌫️</div>
+                <div class="day-temps"><span class="high">59°</span> / <span class="low">40°</span></div>
                 <div class="day-desc">Sunny</div>
                 <span class="precip-badge">💧2%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Tuesday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">66°</span> / <span class="low">46°</span></div>
+                <div class="day-icon">☀️</div>
+                <div class="day-temps"><span class="high">66°</span> / <span class="low">45°</span></div>
                 <div class="day-desc">Sunny</div>
                 <span class="precip-badge">💧5%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Wednesday</div>
                 <div class="day-icon">🌫️</div>
-                <div class="day-temps"><span class="high">62°</span> / <span class="low">40°</span></div>
+                <div class="day-temps"><span class="high">64°</span> / <span class="low">46°</span></div>
                 <div class="day-desc">Chance Light Rain</div>
                 <span class="precip-badge">💧40%</span>
             </div>
@@ -525,9 +688,9 @@
             
             <div class="current-section" data-lat="43.959" data-lon="-70.5878">
                 <div class="current-label">🌡️ Right Now</div>
-                <div class="current-icon">☀️</div>
-                <div class="current-temp">25°F</div>
-                <div class="current-desc">Sunny!</div>
+                <div class="current-icon">🌤️</div>
+                <div class="current-temp">30°F</div>
+                <div class="current-desc">Mostly sunny</div>
             </div>
 
             <div class="lunchtime-section">
@@ -566,9 +729,118 @@
                     <div class="period-label">🌙 Evening</div>
                     <div class="period-time">6pm–10pm</div>
                     <div class="period-icon">☁️</div>
-                    <div class="period-temp">29°F</div>
+                    <div class="period-temp">28°F</div>
                     <div class="period-desc">Cloudy</div>
                     <div class="precip">💧 1% chance of rain</div>
+                </div>
+                </div>
+            </div>
+
+            
+            <div class="hourly-section">
+                <h3>⏰ Hour by Hour</h3>
+                <div class="hourly-scroll">
+                <div class="hour-card">
+                    <div class="hour-label">6 AM</div>
+                    <div class="hour-icon">⛅</div>
+                    <div class="hour-temp">20°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">7 AM</div>
+                    <div class="hour-icon">☀️</div>
+                    <div class="hour-temp">22°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">8 AM</div>
+                    <div class="hour-icon">☀️</div>
+                    <div class="hour-temp">27°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">9 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">32°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">10 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">32°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">11 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">33°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">12 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">33°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">1 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">34°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">2 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">35°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">3 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">34°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">4 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">33°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">5 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">31°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">6 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">28°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">7 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">27°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">8 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">26°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">9 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">25°</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">10 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">25°</div>
+                    
                 </div>
                 </div>
             </div>
@@ -580,7 +852,7 @@
             <div class="day-card">
                 <div class="day-name">Thursday</div>
                 <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">34°</span> / <span class="low">22°</span></div>
+                <div class="day-temps"><span class="high">34°</span> / <span class="low">20°</span></div>
                 <div class="day-desc">Mostly Cloudy</div>
                 <span class="precip-badge">💧1%</span>
             </div>
@@ -600,31 +872,31 @@
             </div>
             <div class="day-card">
                 <div class="day-name">Sunday</div>
-                <div class="day-icon">🌫️</div>
-                <div class="day-temps"><span class="high">50°</span> / <span class="low">27°</span></div>
+                <div class="day-icon">🌦️</div>
+                <div class="day-temps"><span class="high">52°</span> / <span class="low">30°</span></div>
                 <div class="day-desc">Slight Chance Light Rain then Mostly Sunny</div>
                 <span class="precip-badge">💧41%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Monday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">56°</span> / <span class="low">30°</span></div>
+                <div class="day-icon">🌫️</div>
+                <div class="day-temps"><span class="high">56°</span> / <span class="low">32°</span></div>
                 <div class="day-desc">Sunny</div>
                 <span class="precip-badge">💧1%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Tuesday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">59°</span> / <span class="low">34°</span></div>
+                <div class="day-icon">☀️</div>
+                <div class="day-temps"><span class="high">60°</span> / <span class="low">36°</span></div>
                 <div class="day-desc">Mostly Sunny</div>
                 <span class="precip-badge">💧7%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Wednesday</div>
-                <div class="day-icon">🌨️</div>
-                <div class="day-temps"><span class="high">55°</span> / <span class="low">34°</span></div>
+                <div class="day-icon">🌦️</div>
+                <div class="day-temps"><span class="high">64°</span> / <span class="low">37°</span></div>
                 <div class="day-desc">Chance Light Rain</div>
-                <span class="precip-badge">❄️ 0.1 in (44%)</span>
+                <span class="precip-badge">💧44%</span>
             </div>
                 </div>
             </div>
