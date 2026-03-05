@@ -335,6 +335,23 @@ def process_open_meteo(data):
                 "snow_inches": total_snow_in,
             }
 
+    # Hourly forecast for today (6 AM to 10 PM)
+    hourly_forecast = []
+    for i, t in enumerate(times):
+        if t.startswith(today_str):
+            hour = int(t.split("T")[1].split(":")[0])
+            if 6 <= hour <= 22:
+                h_temp = round(temps[i]) if i < len(temps) else None
+                h_code = codes[i] if i < len(codes) else 0
+                h_precip = precip[i] if i < len(precip) else 0
+                if h_temp is not None:
+                    hourly_forecast.append({
+                        "hour": hour,
+                        "temp": h_temp,
+                        "weather_code": h_code,
+                        "precip_chance": h_precip,
+                    })
+
     # 7-day forecast
     daily_dates = daily.get("time", [])
     daily_highs = daily.get("temperature_2m_max", [])
@@ -366,6 +383,7 @@ def process_open_meteo(data):
         "lunch_temp": lunch_temp,
         "lunch_code": lunch_code,
         "periods": period_data,
+        "hourly": hourly_forecast,
         "seven_day": seven_day,
     }
 
@@ -385,6 +403,7 @@ def process_noaa(hourly_data, daily_data):
         "lunch_temp": None,
         "lunch_code": 0,
         "periods": {},
+        "hourly": [],
         "seven_day": [],
     }
 
@@ -483,6 +502,7 @@ def blend_forecasts(open_meteo, noaa):
         "lunch_temp_range": None,
         "lunch_code": open_meteo.get("lunch_code", 0),
         "periods": {},
+        "hourly": open_meteo.get("hourly", []),
         "seven_day": [],
     }
 
@@ -691,6 +711,42 @@ def generate_html(locations_data, generated_time):
                     <div class="period-desc">No data yet</div>
                 </div>"""
 
+        # Hourly timeline
+        hourly_html = ""
+        hourly_data = data.get("hourly", [])
+        if hourly_data:
+            hourly_items = ""
+            for h in hourly_data:
+                h_hour = h["hour"]
+                h_temp = h["temp"]
+                h_code = h["weather_code"]
+                h_precip = h.get("precip_chance", 0)
+                _, h_icon = wmo_desc(h_code)
+                # Format hour: 6 AM, 12 PM, etc.
+                if h_hour == 0:
+                    h_label = "12 AM"
+                elif h_hour < 12:
+                    h_label = f"{h_hour} AM"
+                elif h_hour == 12:
+                    h_label = "12 PM"
+                else:
+                    h_label = f"{h_hour - 12} PM"
+                # Show rain drop if precip chance > 30%
+                precip_dot = f'<div class="hour-precip">💧{h_precip}%</div>' if h_precip > 30 else ""
+                hourly_items += f"""
+                <div class="hour-card">
+                    <div class="hour-label">{h_label}</div>
+                    <div class="hour-icon">{h_icon}</div>
+                    <div class="hour-temp">{h_temp}°</div>
+                    {precip_dot}
+                </div>"""
+            hourly_html = f"""
+            <div class="hourly-section">
+                <h3>⏰ Hour by Hour</h3>
+                <div class="hourly-scroll">{hourly_items}
+                </div>
+            </div>"""
+
         # 7-day forecast
         seven_day_html = ""
         for day in data.get("seven_day", []):
@@ -762,6 +818,8 @@ def generate_html(locations_data, generated_time):
                     {periods_html}
                 </div>
             </div>
+
+            {hourly_html}
 
             <div class="seven-day-section">
                 <h3>📅 Next 7 Days</h3>
@@ -971,6 +1029,60 @@ def generate_html(locations_data, generated_time):
             font-size: 1.05em;
             line-height: 1.8;
             color: #4e342e;
+        }}
+
+        /* ── Hourly Timeline ── */
+        .hourly-section {{
+            margin-bottom: 18px;
+        }}
+        .hourly-section h3 {{
+            font-size: 1.2em;
+            color: #c62828;
+            margin-bottom: 12px;
+        }}
+        .hourly-scroll {{
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 8px 0 12px 0;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }}
+        .hourly-scroll::-webkit-scrollbar {{
+            height: 6px;
+        }}
+        .hourly-scroll::-webkit-scrollbar-thumb {{
+            background: #ef9a9a;
+            border-radius: 3px;
+        }}
+        .hour-card {{
+            flex: 0 0 auto;
+            text-align: center;
+            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
+            border: 2px solid #ffca28;
+            border-radius: 4px;
+            padding: 10px 14px;
+            min-width: 75px;
+        }}
+        .hour-label {{
+            font-size: 0.85em;
+            font-weight: 700;
+            color: #f57f17;
+            margin-bottom: 4px;
+        }}
+        .hour-icon {{
+            font-size: 1.6em;
+            margin: 4px 0;
+        }}
+        .hour-temp {{
+            font-size: 1.2em;
+            font-weight: 800;
+            color: #e65100;
+        }}
+        .hour-precip {{
+            font-size: 0.75em;
+            color: #1565c0;
+            margin-top: 4px;
         }}
 
         /* ── Period Cards (Morning/Afternoon/Evening) ── */
