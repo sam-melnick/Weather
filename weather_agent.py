@@ -99,7 +99,7 @@ def fetch_open_meteo(lat, lon):
         f"latitude={lat}&longitude={lon}"
         f"&current=temperature_2m,weather_code,wind_speed_10m"
         f"&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m,precipitation,snowfall"
-        f"&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,precipitation_sum,snowfall_sum,sunrise,sunset"
+        f"&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,precipitation_sum,snowfall_sum,wind_speed_10m_max,sunrise,sunset"
         f"&temperature_unit=fahrenheit"
         f"&wind_speed_unit=mph"
         f"&timezone=America%2FNew_York"
@@ -266,11 +266,14 @@ def process_open_meteo(data):
     hourly = data.get("hourly", {})
     daily = data.get("daily", {})
 
-    # Current temperature
+    # Current temperature and wind
     current_temp = current.get("temperature_2m")
     current_code = current.get("weather_code", 0)
+    current_wind = current.get("wind_speed_10m")
     if current_temp is not None:
         current_temp = round(current_temp)
+    if current_wind is not None:
+        current_wind = round(current_wind)
 
     times = hourly.get("time", [])
     temps = hourly.get("temperature_2m", [])
@@ -344,12 +347,14 @@ def process_open_meteo(data):
                 h_temp = round(temps[i]) if i < len(temps) else None
                 h_code = codes[i] if i < len(codes) else 0
                 h_precip = precip[i] if i < len(precip) else 0
+                h_wind = round(winds[i]) if i < len(winds) else 0
                 if h_temp is not None:
                     hourly_forecast.append({
                         "hour": hour,
                         "temp": h_temp,
                         "weather_code": h_code,
                         "precip_chance": h_precip,
+                        "wind": h_wind,
                     })
 
     # 7-day forecast
@@ -360,12 +365,14 @@ def process_open_meteo(data):
     daily_precip = daily.get("precipitation_probability_max", [])
     daily_rain_sum = daily.get("precipitation_sum", [])
     daily_snow_sum = daily.get("snowfall_sum", [])
+    daily_wind_max = daily.get("wind_speed_10m_max", [])
 
     seven_day = []
     for i in range(min(7, len(daily_dates))):
         # Convert mm to inches for rain, cm to inches for snow
         rain_in = round(daily_rain_sum[i] / 25.4, 1) if i < len(daily_rain_sum) and daily_rain_sum[i] else 0
         snow_in = round(daily_snow_sum[i] / 2.54, 1) if i < len(daily_snow_sum) and daily_snow_sum[i] else 0
+        wind_max = round(daily_wind_max[i]) if i < len(daily_wind_max) and daily_wind_max[i] else 0
         seven_day.append({
             "date": daily_dates[i] if i < len(daily_dates) else "",
             "high": round(daily_highs[i]) if i < len(daily_highs) else None,
@@ -374,12 +381,14 @@ def process_open_meteo(data):
             "precip_chance": daily_precip[i] if i < len(daily_precip) else 0,
             "rain_inches": rain_in,
             "snow_inches": snow_in,
+            "wind_max": wind_max,
         })
 
     return {
         "source": "Open-Meteo",
         "current_temp": current_temp,
         "current_code": current_code,
+        "current_wind": current_wind,
         "lunch_temp": lunch_temp,
         "lunch_code": lunch_code,
         "periods": period_data,
@@ -400,6 +409,7 @@ def process_noaa(hourly_data, daily_data):
         "source": "NOAA",
         "current_temp": None,
         "current_code": 0,
+        "current_wind": None,
         "lunch_temp": None,
         "lunch_code": 0,
         "periods": {},
@@ -498,6 +508,7 @@ def blend_forecasts(open_meteo, noaa):
     blended = {
         "current_temp": None,
         "current_code": open_meteo.get("current_code", 0),
+        "current_wind": open_meteo.get("current_wind"),
         "lunch_temp": None,
         "lunch_temp_range": None,
         "lunch_code": open_meteo.get("lunch_code", 0),
@@ -592,6 +603,9 @@ def should_alert(seven_day):
 
         snow_in = day.get("snow_inches", 0)
         precip_prob = day.get("precip_chance", 0)
+        wind_max = day.get("wind_max", 0)
+        if wind_max and wind_max >= 15:
+            alerts.append(f"💨 Windy {on_day}! Winds up to {wind_max} mph!")
         if code in (73, 75, 77, 85, 86):
             if snow_in >= 6:
                 alerts.append(f"❄️ Snow {on_day}! Maybe a snow day!")
@@ -641,16 +655,21 @@ def generate_html(locations_data, generated_time):
         # Current temp section (always render — JS will update it live)
         current_temp = data.get("current_temp")
         current_code = data.get("current_code", 0)
+        current_wind = data.get("current_wind")
         current_desc, current_icon = wmo_desc(current_code)
         cur_temp_display = f"{current_temp}°F" if current_temp is not None else "..."
         cur_desc_display = current_desc if current_temp is not None else "Loading..."
         cur_icon_display = current_icon if current_temp is not None else "🌡️"
+        cur_wind_html = ""
+        if current_wind is not None and current_wind >= 15:
+            cur_wind_html = f'<div class="current-wind">💨 {current_wind} mph winds!</div>'
         current_html = f"""
             <div class="current-section" data-lat="{loc['lat']}" data-lon="{loc['lon']}">
                 <div class="current-label">🌡️ Right Now</div>
                 <div class="current-icon">{cur_icon_display}</div>
                 <div class="current-temp">{cur_temp_display}</div>
                 <div class="current-desc">{cur_desc_display}</div>
+                {cur_wind_html}
             </div>"""
 
         # Lunchtime section
@@ -732,13 +751,16 @@ def generate_html(locations_data, generated_time):
                 else:
                     h_label = f"{h_hour - 12} PM"
                 # Show rain drop if precip chance > 30%
+                h_wind = h.get("wind", 0)
                 precip_dot = f'<div class="hour-precip">💧{h_precip}%</div>' if h_precip > 30 else ""
+                wind_dot = f'<div class="hour-wind">💨{h_wind} mph</div>' if h_wind >= 15 else ""
                 hourly_items += f"""
                 <div class="hour-card">
                     <div class="hour-label">{h_label}</div>
                     <div class="hour-icon">{h_icon}</div>
                     <div class="hour-temp">{h_temp}°</div>
                     {precip_dot}
+                    {wind_dot}
                 </div>"""
             hourly_html = f"""
             <div class="hourly-section">
@@ -972,6 +994,17 @@ def generate_html(locations_data, generated_time):
             font-size: 1em;
             color: #1976d2;
             margin-top: 4px;
+        }}
+        .current-wind {{
+            font-size: 1em;
+            font-weight: 700;
+            color: #6a1b9a;
+            margin-top: 6px;
+        }}
+        .hour-wind {{
+            font-size: 0.75em;
+            color: #6a1b9a;
+            margin-top: 2px;
         }}
 
         /* ── Lunchtime (the BIG number) ── */
@@ -1320,8 +1353,8 @@ def generate_html(locations_data, generated_time):
 
             var url = 'https://api.open-meteo.com/v1/forecast?latitude=' + lat
                 + '&longitude=' + lon
-                + '&current=temperature_2m,weather_code'
-                + '&temperature_unit=fahrenheit&timezone=America%2FNew_York';
+                + '&current=temperature_2m,weather_code,wind_speed_10m'
+                + '&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FNew_York';
 
             fetch(url)
                 .then(function(r) {{ return r.json(); }})
@@ -1329,11 +1362,25 @@ def generate_html(locations_data, generated_time):
                     if (data && data.current) {{
                         var temp = Math.round(data.current.temperature_2m);
                         var code = data.current.weather_code || 0;
+                        var wind = Math.round(data.current.wind_speed_10m || 0);
                         var info = wmoMap[code] || ["Unknown", "🌡️"];
 
                         section.querySelector('.current-temp').textContent = temp + '°F';
                         section.querySelector('.current-icon').textContent = info[1];
                         section.querySelector('.current-desc').textContent = info[0];
+
+                        // Show or hide wind
+                        var windEl = section.querySelector('.current-wind');
+                        if (wind >= 15) {{
+                            if (!windEl) {{
+                                windEl = document.createElement('div');
+                                windEl.className = 'current-wind';
+                                section.appendChild(windEl);
+                            }}
+                            windEl.textContent = '💨 ' + wind + ' mph winds!';
+                        }} else if (windEl) {{
+                            windEl.textContent = '';
+                        }}
                     }}
                 }})
                 .catch(function(e) {{
