@@ -25,7 +25,6 @@ jobs:
 
       - name: Run weather agent
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           OUTPUT_PATH: index.html
         run: python weather_agent.py
 
