@@ -7,450 +7,96 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=OpenDyslexic:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* ── OpenDyslexic fallback: if Google Fonts CDN fails, use system sans ── */
         @font-face {
             font-family: 'OpenDyslexic';
             src: local('OpenDyslexic');
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            /* OpenDyslexic primary, fallback to clean sans-serif */
             font-family: 'OpenDyslexic', 'Comic Sans MS', 'Segoe UI', sans-serif;
-            /* Red-themed gradient background */
             background: linear-gradient(180deg, #b71c1c 0%, #d32f2f 30%, #e57373 100%);
             min-height: 100vh;
             padding: 20px;
             color: #2a2a2a;
-            /* Wider letter + word spacing helps dyslexia */
             letter-spacing: 0.04em;
             word-spacing: 0.12em;
             line-height: 1.8;
             font-size: 18px;
         }
-
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-        }
-
-        /* ── Pixel-art decorative border (Minecraft-style) ── */
+        .container { max-width: 850px; margin: 0 auto; }
         .pixel-border {
             border: 4px solid #5d4037;
-            box-shadow:
-                inset 0 0 0 2px #8d6e63,
-                4px 4px 0 0 rgba(0,0,0,0.15);
+            box-shadow: inset 0 0 0 2px #8d6e63, 4px 4px 0 0 rgba(0,0,0,0.15);
             image-rendering: pixelated;
         }
-
-        /* ── Header ── */
-        .header {
-            text-align: center;
-            color: white;
-            margin-bottom: 24px;
-            padding: 16px;
-        }
-
-        .header h1 {
-            font-size: 2em;
-            margin-bottom: 6px;
-            text-shadow: 3px 3px 0 rgba(0,0,0,0.3);
-        }
-
-        .header .date {
-            font-size: 1.15em;
-            opacity: 0.95;
-        }
-
-        .header .updated {
-            font-size: 0.9em;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        /* ── Fun Fact ── */
-        .fun-fact {
-            background: #4caf50;
-            border-radius: 4px;
-            padding: 18px 22px;
-            margin-bottom: 24px;
-            color: white;
-            text-align: center;
-        }
-
-        .fun-fact .label {
-            font-weight: 700;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-        }
-
-        .fun-fact .fact-text {
-            font-size: 1.05em;
-            line-height: 1.8;
-        }
-
-        /* ── Location Cards ── */
-        .location-card {
-            background: #fff8f0;
-            border-radius: 4px;
-            padding: 24px;
-            margin-bottom: 24px;
-        }
-
-        .location-card h2 {
-            font-size: 1.4em;
-            margin-bottom: 16px;
-            color: #b71c1c;
-            border-bottom: 4px solid #d32f2f;
-            padding-bottom: 10px;
-        }
-
-        /* ── Current Temp (Right Now) ── */
-        .current-section {
-            text-align: center;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border: 3px solid #64b5f6;
-            border-radius: 4px;
-            padding: 20px;
-            margin-bottom: 18px;
-        }
-        .current-label {
-            font-size: 1.15em;
-            font-weight: 700;
-            color: #1565c0;
-            margin-bottom: 8px;
-        }
-        .current-icon {
-            font-size: 2.8em;
-            margin: 8px 0;
-        }
-        .current-temp {
-            font-size: 2.8em;
-            font-weight: 800;
-            color: #1565c0;
-        }
-        .current-desc {
-            font-size: 1em;
-            color: #1976d2;
-            margin-top: 4px;
-        }
-        .current-wind {
-            font-size: 1em;
-            font-weight: 700;
-            color: #6a1b9a;
-            margin-top: 6px;
-        }
-        .hour-wind {
-            font-size: 0.75em;
-            color: #6a1b9a;
-            margin-top: 2px;
-        }
-
-        /* ── Lunchtime (the BIG number) ── */
-        .lunchtime-section {
-            text-align: center;
-            /* Warm cream with red accent */
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border: 3px solid #ef9a9a;
-            border-radius: 4px;
-            padding: 24px;
-            margin-bottom: 18px;
-        }
-
-        .lunch-label {
-            font-size: 1.15em;
-            font-weight: 700;
-            color: #c62828;
-            margin-bottom: 10px;
-        }
-
-        .lunch-icon {
-            font-size: 3.5em;
-            margin: 10px 0;
-        }
-
-        .lunch-temp {
-            font-size: 3.5em;
-            font-weight: 700;
-            color: #b71c1c;
-        }
-
-        .lunch-desc {
-            font-size: 1.15em;
-            color: #555;
-            margin-top: 6px;
-        }
-
-        /* ── Outfit ── */
-        .outfit-section {
-            background: #fff3e0;
-            border: 3px solid #ffcc80;
-            border-radius: 4px;
-            padding: 16px 20px;
-            margin-bottom: 18px;
-        }
-
-        .outfit-label {
-            font-weight: 700;
-            font-size: 1.1em;
-            margin-bottom: 8px;
-            color: #e65100;
-        }
-
-        .outfit-text {
-            font-size: 1.05em;
-            line-height: 1.8;
-            color: #4e342e;
-        }
-
-        /* ── Hourly Timeline ── */
-        .hourly-section {
-            margin-bottom: 18px;
-        }
-        .hourly-section h3 {
-            font-size: 1.2em;
-            color: #c62828;
-            margin-bottom: 12px;
-        }
-        .hourly-scroll {
-            display: flex;
-            overflow-x: auto;
-            gap: 8px;
-            padding: 8px 0 12px 0;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-        }
-        .hourly-scroll::-webkit-scrollbar {
-            height: 6px;
-        }
-        .hourly-scroll::-webkit-scrollbar-thumb {
-            background: #ef9a9a;
-            border-radius: 3px;
-        }
-        .hour-card {
-            flex: 0 0 auto;
-            text-align: center;
-            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-            border: 2px solid #ffca28;
-            border-radius: 4px;
-            padding: 10px 14px;
-            min-width: 75px;
-        }
-        .hour-label {
-            font-size: 0.85em;
-            font-weight: 700;
-            color: #f57f17;
-            margin-bottom: 4px;
-        }
-        .hour-icon {
-            font-size: 1.6em;
-            margin: 4px 0;
-        }
-        .hour-temp {
-            font-size: 1.2em;
-            font-weight: 800;
-            color: #e65100;
-        }
-        .hour-precip {
-            font-size: 0.75em;
-            color: #1565c0;
-            margin-top: 4px;
-        }
-
-        /* ── Period Cards (Morning/Afternoon/Evening) ── */
-        .periods-section h3,
-        .seven-day-section h3 {
-            font-size: 1.2em;
-            color: #c62828;
-            margin-bottom: 14px;
-        }
-
-        .periods-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin-bottom: 22px;
-        }
-
-        .period-card {
-            background: white;
-            border-radius: 4px;
-            padding: 16px;
-            text-align: center;
-            border: 3px solid #e0e0e0;
-        }
-
-        .period-label {
-            font-weight: 700;
-            font-size: 1em;
-            color: #c62828;
-        }
-
-        .period-time {
-            font-size: 0.85em;
-            color: #888;
-            margin-bottom: 8px;
-        }
-
-        .period-icon {
-            font-size: 2.5em;
-            margin: 8px 0;
-        }
-
-        .period-temp {
-            font-size: 1.5em;
-            font-weight: 700;
-            color: #333;
-        }
-
-        .period-desc {
-            font-size: 0.95em;
-            color: #666;
-            margin-top: 6px;
-        }
-
-        .precip {
-            font-size: 0.9em;
-            color: #1565c0;
-            margin-top: 8px;
-            font-weight: 700;
-        }
-
-        /* ── 7-Day Cards ── */
-        .seven-day-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .day-card {
-            background: white;
-            border-radius: 4px;
-            padding: 12px 8px;
-            text-align: center;
-            border: 3px solid #e0e0e0;
-        }
-
-        .day-name {
-            font-weight: 700;
-            font-size: 0.9em;
-            color: #c62828;
-            margin-bottom: 6px;
-        }
-
-        .day-icon {
-            font-size: 1.8em;
-            margin: 6px 0;
-        }
-
-        .day-temps {
-            font-size: 1em;
-            margin: 6px 0;
-        }
-
-        .high {
-            color: #c62828;
-            font-weight: 700;
-        }
-
-        .low {
-            color: #1565c0;
-            font-weight: 700;
-        }
-
-        .day-desc {
-            font-size: 0.8em;
-            color: #777;
-            line-height: 1.5;
-        }
-
-        .precip-badge {
-            display: inline-block;
-            background: #e3f2fd;
-            color: #1565c0;
-            font-size: 0.8em;
-            padding: 3px 8px;
-            border-radius: 4px;
-            margin-top: 6px;
-            font-weight: 700;
-        }
-
-        /* ── Alerts ── */
-        .alerts-section {
-            background: #fff9c4;
-            border: 4px solid #fdd835;
-            border-radius: 4px;
-            padding: 16px 20px;
-            margin-top: 14px;
-        }
-
-        .alerts-section h3 {
-            color: #e65100;
-            margin-bottom: 10px;
-            font-size: 1.15em;
-        }
-
-        .alerts-section ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .alerts-section li {
-            padding: 6px 0;
-            font-size: 1em;
-            color: #bf360c;
-            line-height: 1.7;
-        }
-
-        .error {
-            color: #c62828;
-            text-align: center;
-            padding: 20px;
-            font-size: 1.1em;
-        }
-
-        /* ── Footer with pixel pickaxe ── */
-        .footer {
-            text-align: center;
-            color: rgba(255,255,255,0.75);
-            font-size: 0.85em;
-            margin-top: 20px;
-            padding-bottom: 24px;
-        }
-
-        /* ── Responsive ── */
+        .header { text-align: center; color: white; margin-bottom: 24px; padding: 16px; }
+        .header h1 { font-size: 2em; margin-bottom: 6px; text-shadow: 3px 3px 0 rgba(0,0,0,0.3); }
+        .header .date { font-size: 1.15em; opacity: 0.95; }
+        .header .updated { font-size: 0.9em; opacity: 0.8; margin-top: 4px; }
+        .fun-fact { background: #4caf50; border-radius: 4px; padding: 18px 22px; margin-bottom: 24px; color: white; text-align: center; }
+        .fun-fact .label { font-weight: 700; font-size: 1.1em; margin-bottom: 8px; }
+        .fun-fact .fact-text { font-size: 1.05em; line-height: 1.8; }
+        .location-card { background: #fff8f0; border-radius: 4px; padding: 24px; margin-bottom: 24px; }
+        .location-card h2 { font-size: 1.4em; margin-bottom: 16px; color: #b71c1c; border-bottom: 4px solid #d32f2f; padding-bottom: 10px; }
+        .current-section { text-align: center; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border: 3px solid #64b5f6; border-radius: 4px; padding: 20px; margin-bottom: 18px; }
+        .current-label { font-size: 1.15em; font-weight: 700; color: #1565c0; margin-bottom: 8px; }
+        .current-icon { font-size: 2.8em; margin: 8px 0; }
+        .current-temp { font-size: 2.8em; font-weight: 800; color: #1565c0; }
+        .current-desc { font-size: 1em; color: #1976d2; margin-top: 4px; }
+        .current-wind { font-size: 1em; font-weight: 700; color: #6a1b9a; margin-top: 6px; }
+        .hour-wind { font-size: 0.75em; color: #6a1b9a; margin-top: 2px; }
+        .lunchtime-section { text-align: center; background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border: 3px solid #ef9a9a; border-radius: 4px; padding: 24px; margin-bottom: 18px; }
+        .lunch-label { font-size: 1.15em; font-weight: 700; color: #c62828; margin-bottom: 10px; }
+        .lunch-icon { font-size: 3.5em; margin: 10px 0; }
+        .lunch-temp { font-size: 3.5em; font-weight: 700; color: #b71c1c; }
+        .lunch-desc { font-size: 1.15em; color: #555; margin-top: 6px; }
+        .outfit-section { background: #fff3e0; border: 3px solid #ffcc80; border-radius: 4px; padding: 16px 20px; margin-bottom: 18px; }
+        .outfit-label { font-weight: 700; font-size: 1.1em; margin-bottom: 8px; color: #e65100; }
+        .outfit-text { font-size: 1.05em; line-height: 1.8; color: #4e342e; }
+        .hourly-section { margin-bottom: 18px; }
+        .hourly-section h3 { font-size: 1.2em; color: #c62828; margin-bottom: 12px; }
+        .hourly-scroll { display: flex; overflow-x: auto; gap: 8px; padding: 8px 0 12px 0; -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
+        .hourly-scroll::-webkit-scrollbar { height: 6px; }
+        .hourly-scroll::-webkit-scrollbar-thumb { background: #ef9a9a; border-radius: 3px; }
+        .hour-card { flex: 0 0 auto; text-align: center; background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); border: 2px solid #ffca28; border-radius: 4px; padding: 10px 14px; min-width: 75px; }
+        .hour-label { font-size: 0.85em; font-weight: 700; color: #f57f17; margin-bottom: 4px; }
+        .hour-icon { font-size: 1.6em; margin: 4px 0; }
+        .hour-temp { font-size: 1.2em; font-weight: 800; color: #e65100; }
+        .hour-precip { font-size: 0.75em; color: #1565c0; margin-top: 4px; }
+        .periods-section h3, .seven-day-section h3 { font-size: 1.2em; color: #c62828; margin-bottom: 14px; }
+        .periods-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 22px; }
+        .period-card { background: white; border-radius: 4px; padding: 16px; text-align: center; border: 3px solid #e0e0e0; }
+        .period-label { font-weight: 700; font-size: 1em; color: #c62828; }
+        .period-time { font-size: 0.85em; color: #888; margin-bottom: 8px; }
+        .period-icon { font-size: 2.5em; margin: 8px 0; }
+        .period-temp { font-size: 1.5em; font-weight: 700; color: #333; }
+        .period-desc { font-size: 0.95em; color: #666; margin-top: 6px; }
+        .precip { font-size: 0.9em; color: #1565c0; margin-top: 8px; font-weight: 700; }
+        .seven-day-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin-bottom: 18px; }
+        .day-card { background: white; border-radius: 4px; padding: 12px 8px; text-align: center; border: 3px solid #e0e0e0; }
+        .day-name { font-weight: 700; font-size: 0.9em; color: #c62828; margin-bottom: 6px; }
+        .day-icon { font-size: 1.8em; margin: 6px 0; }
+        .day-temps { font-size: 1em; margin: 6px 0; }
+        .high { color: #c62828; font-weight: 700; }
+        .low { color: #1565c0; font-weight: 700; }
+        .day-desc { font-size: 0.8em; color: #777; line-height: 1.5; }
+        .precip-badge { display: inline-block; background: #e3f2fd; color: #1565c0; font-size: 0.8em; padding: 3px 8px; border-radius: 4px; margin-top: 6px; font-weight: 700; }
+        .alerts-section { background: #fff9c4; border: 4px solid #fdd835; border-radius: 4px; padding: 16px 20px; margin-top: 14px; }
+        .alerts-section h3 { color: #e65100; margin-bottom: 10px; font-size: 1.15em; }
+        .alerts-section ul { list-style: none; padding: 0; }
+        .alerts-section li { padding: 6px 0; font-size: 1em; color: #bf360c; line-height: 1.7; }
+        .error { color: #c62828; text-align: center; padding: 20px; font-size: 1.1em; }
+        .footer { text-align: center; color: rgba(255,255,255,0.75); font-size: 0.85em; margin-top: 20px; padding-bottom: 24px; }
         @media (max-width: 700px) {
-            .seven-day-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-            .header h1 {
-                font-size: 1.6em;
-            }
-            body {
-                font-size: 16px;
-            }
+            .seven-day-grid { grid-template-columns: repeat(4, 1fr); }
+            .header h1 { font-size: 1.6em; }
+            body { font-size: 16px; }
         }
-
         @media (max-width: 480px) {
-            body {
-                padding: 12px;
-                font-size: 15px;
-            }
-            .seven-day-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .periods-grid {
-                grid-template-columns: 1fr;
-            }
-            .lunch-temp {
-                font-size: 2.8em;
-            }
+            body { padding: 12px; font-size: 15px; }
+            .seven-day-grid { grid-template-columns: repeat(3, 1fr); }
+            .periods-grid { grid-template-columns: 1fr; }
+            .lunch-temp { font-size: 2.8em; }
         }
     </style>
 </head>
@@ -458,13 +104,13 @@
     <div class="container">
         <div class="header">
             <h1>🌤️ Weather Report! 🌤️</h1>
-            <div class="date">Sunday, April 05, 2026</div>
-            <div class="updated">Updated at 03:43 AM ET</div>
+            <div class="date">Saturday, April 04, 2026</div>
+            <div class="updated">Updated at 03:53 PM ET</div>
         </div>
 
         <div class="fun-fact pixel-border">
             <div class="label">🧠 Cool Fact of the Day!</div>
-            <div class="fact-text">Snow golems melt in hot biomes. Real snowmen melt when it gets above 32°F! ☃️</div>
+            <div class="fact-text">Rain has a special smell. It is called petrichor. Cool word, right? 🌿</div>
         </div>
 
         
@@ -475,21 +121,21 @@
             <div class="current-section" data-lat="42.3709" data-lon="-71.1828">
                 <div class="current-label">🌡️ Right Now</div>
                 <div class="current-icon">☁️</div>
-                <div class="current-temp">38°F</div>
+                <div class="current-temp">55°F</div>
                 <div class="current-desc">Cloudy</div>
                 
             </div>
 
             <div class="lunchtime-section">
                 <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
-                <div class="lunch-icon">🌫️</div>
-                <div class="lunch-temp">46–54°F</div>
-                <div class="lunch-desc">Foggy</div>
+                <div class="lunch-icon">☁️</div>
+                <div class="lunch-temp">65°F</div>
+                <div class="lunch-desc">Cloudy</div>
             </div>
 
             <div class="outfit-section">
                 <div class="outfit-label">👗 What to Wear</div>
-                <div class="outfit-text">🧥 A bit cool. A hoodie or medium jacket is perfect!</div>
+                <div class="outfit-text">👕 Nice out! Long sleeves or a light jacket!</div>
             </div>
 
             <div class="periods-section">
@@ -499,26 +145,26 @@
                 <div class="period-card">
                     <div class="period-label">🌅 Morning</div>
                     <div class="period-time">6am–12pm</div>
-                    <div class="period-icon">🌫️</div>
-                    <div class="period-temp">49°F</div>
-                    <div class="period-desc">Foggy</div>
-                    <div class="precip">💧 23% chance of rain</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">55°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">💧 30% chance of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
                     <div class="period-time">12pm–6pm</div>
-                    <div class="period-icon">🌧️</div>
-                    <div class="period-temp">58°F</div>
-                    <div class="period-desc">Lots of drizzle</div>
-                    <div class="precip">💧 64% chance of rain</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">72°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">🌧️ 0.1 inches of rain</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">🌙 Evening</div>
                     <div class="period-time">6pm–10pm</div>
-                    <div class="period-icon">🌦️</div>
-                    <div class="period-temp">57°F</div>
-                    <div class="period-desc">A little rain</div>
-                    <div class="precip">💧 59% chance of rain</div>
+                    <div class="period-icon">🌧️</div>
+                    <div class="period-temp">52°F</div>
+                    <div class="period-desc">Rainy</div>
+                    <div class="precip">🌧️ 0.2 inches of rain</div>
                 </div>
                 </div>
             </div>
@@ -529,121 +175,121 @@
                 <div class="hourly-scroll">
                 <div class="hour-card">
                     <div class="hour-label">6 AM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">39°</div>
-                    
-                    
-                </div>
-                <div class="hour-card">
-                    <div class="hour-label">7 AM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">39°</div>
-                    
-                    
-                </div>
-                <div class="hour-card">
-                    <div class="hour-label">8 AM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">40°</div>
-                    
-                    
-                </div>
-                <div class="hour-card">
-                    <div class="hour-label">9 AM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">40°</div>
-                    
-                    
-                </div>
-                <div class="hour-card">
-                    <div class="hour-label">10 AM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">42°</div>
-                    
-                    
-                </div>
-                <div class="hour-card">
-                    <div class="hour-label">11 AM</div>
-                    <div class="hour-icon">🌫️</div>
+                    <div class="hour-icon">☁️</div>
                     <div class="hour-temp">45°</div>
                     
                     
                 </div>
                 <div class="hour-card">
-                    <div class="hour-label">12 PM</div>
-                    <div class="hour-icon">🌫️</div>
+                    <div class="hour-label">7 AM</div>
+                    <div class="hour-icon">☁️</div>
                     <div class="hour-temp">47°</div>
-                    <div class="hour-precip">💧47%</div>
+                    
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">8 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">50°</div>
+                    
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">9 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">53°</div>
+                    
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">10 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">57°</div>
+                    
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">11 AM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">62°</div>
+                    <div class="hour-precip">💧35%</div>
+                    
+                </div>
+                <div class="hour-card">
+                    <div class="hour-label">12 PM</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">67°</div>
+                    <div class="hour-precip">💧40%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">1 PM</div>
-                    <div class="hour-icon">🌫️</div>
-                    <div class="hour-temp">50°</div>
-                    <div class="hour-precip">💧62%</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">70°</div>
+                    <div class="hour-precip">💧45%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">2 PM</div>
-                    <div class="hour-icon">🌧️</div>
-                    <div class="hour-temp">52°</div>
-                    <div class="hour-precip">💧47%</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">72°</div>
+                    <div class="hour-precip">💧50%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">3 PM</div>
                     <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">55°</div>
-                    <div class="hour-precip">💧64%</div>
+                    <div class="hour-temp">70°</div>
+                    <div class="hour-precip">💧55%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">4 PM</div>
                     <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">54°</div>
-                    <div class="hour-precip">💧55%</div>
+                    <div class="hour-temp">66°</div>
+                    <div class="hour-precip">💧60%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">5 PM</div>
                     <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">55°</div>
-                    <div class="hour-precip">💧52%</div>
+                    <div class="hour-temp">60°</div>
+                    <div class="hour-precip">💧65%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">6 PM</div>
-                    <div class="hour-icon">🌦️</div>
+                    <div class="hour-icon">🌧️</div>
                     <div class="hour-temp">55°</div>
-                    <div class="hour-precip">💧59%</div>
+                    <div class="hour-precip">💧70%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">7 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">55°</div>
-                    <div class="hour-precip">💧51%</div>
+                    <div class="hour-icon">🌧️</div>
+                    <div class="hour-temp">50°</div>
+                    <div class="hour-precip">💧75%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">8 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">51°</div>
-                    
+                    <div class="hour-icon">🌧️</div>
+                    <div class="hour-temp">46°</div>
+                    <div class="hour-precip">💧80%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">9 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">48°</div>
-                    
+                    <div class="hour-icon">🌧️</div>
+                    <div class="hour-temp">43°</div>
+                    <div class="hour-precip">💧80%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">10 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">46°</div>
-                    
+                    <div class="hour-icon">🌧️</div>
+                    <div class="hour-temp">40°</div>
+                    <div class="hour-precip">💧80%</div>
                     
                 </div>
                 </div>
@@ -655,61 +301,57 @@
                     
             <div class="day-card">
                 <div class="day-name">Sunday</div>
-                <div class="day-icon">🌦️</div>
-                <div class="day-temps"><span class="high">58°</span> / <span class="low">38°</span></div>
-                <div class="day-desc">Showers And Thunderstorms</div>
-                <span class="precip-badge">🌧️ 0.2 in (64%)</span>
+                <div class="day-icon">☁️</div>
+                <div class="day-temps"><span class="high">72°</span> / <span class="low">38°</span></div>
+                <div class="day-desc">Mostly Cloudy then Rain</div>
+                <span class="precip-badge">🌧️ 0.2 in (55%)</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Monday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">50°</span> / <span class="low">34°</span></div>
-                <div class="day-desc">Mostly Sunny</div>
-                <span class="precip-badge">💧11%</span>
+                <div class="day-icon">🌦️</div>
+                <div class="day-temps"><span class="high">55°</span> / <span class="low">35°</span></div>
+                <div class="day-desc">Showers Likely</div>
+                <span class="precip-badge">🌧️ 0.3 in (60%)</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Tuesday</div>
-                <div class="day-icon">🌦️</div>
-                <div class="day-temps"><span class="high">48°</span> / <span class="low">30°</span></div>
-                <div class="day-desc">Chance Rain And Snow Showers</div>
-                <span class="precip-badge">💧34%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">50°</span> / <span class="low">33°</span></div>
+                <div class="day-desc">Partly Cloudy</div>
+                <span class="precip-badge">💧20%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Wednesday</div>
-                <div class="day-icon">☀️</div>
-                <div class="day-temps"><span class="high">50°</span> / <span class="low">32°</span></div>
-                <div class="day-desc">Sunny</div>
-                <span class="precip-badge">💧6%</span>
+                <div class="day-icon">🌤️</div>
+                <div class="day-temps"><span class="high">53°</span> / <span class="low">36°</span></div>
+                <div class="day-desc">Mostly Sunny</div>
+                <span class="precip-badge">💧10%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Thursday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">58°</span> / <span class="low">38°</span></div>
-                <div class="day-desc">Sunny</div>
-                <span class="precip-badge">💧4%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">58°</span> / <span class="low">40°</span></div>
+                <div class="day-desc">Some Clouds</div>
+                <span class="precip-badge">💧15%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Friday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">67°</span> / <span class="low">42°</span></div>
+                <div class="day-icon">🌤️</div>
+                <div class="day-temps"><span class="high">63°</span> / <span class="low">42°</span></div>
                 <div class="day-desc">Mostly Sunny</div>
                 <span class="precip-badge">💧10%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Saturday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">64°</span> / <span class="low">47°</span></div>
-                <div class="day-desc">Partly Sunny then Slight Chance Rain Showers</div>
-                <span class="precip-badge">💧11%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">60°</span> / <span class="low">40°</span></div>
+                <div class="day-desc">Partly Cloudy</div>
+                <span class="precip-badge">💧25%</span>
             </div>
                 </div>
             </div>
 
             
-            <div class="alerts-section">
-                <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>💨 Windy on Monday! Winds up to 15 mph!</li><li>💨 Windy on Tuesday! Winds up to 18 mph!</li></ul>
-            </div>
         </div>
         <div class="location-card">
             <h2>🌲 Naples, ME</h2>
@@ -717,22 +359,22 @@
             
             <div class="current-section" data-lat="43.959" data-lon="-70.5878">
                 <div class="current-label">🌡️ Right Now</div>
-                <div class="current-icon">☁️</div>
-                <div class="current-temp">37°F</div>
-                <div class="current-desc">Cloudy</div>
+                <div class="current-icon">🌨️</div>
+                <div class="current-temp">32°F</div>
+                <div class="current-desc">Light snow</div>
                 
             </div>
 
             <div class="lunchtime-section">
                 <div class="lunch-label">🍕 Lunchtime / Recess (11:40am – 12pm)</div>
-                <div class="lunch-icon">🌦️</div>
-                <div class="lunch-temp">42°F</div>
-                <div class="lunch-desc">Light drizzle</div>
+                <div class="lunch-icon">🌨️</div>
+                <div class="lunch-temp">33°F</div>
+                <div class="lunch-desc">Light snow</div>
             </div>
 
             <div class="outfit-section">
                 <div class="outfit-label">👗 What to Wear</div>
-                <div class="outfit-text">🧶 Chilly! Wear a warm jacket. A hat is a good idea too! ☔ Bring your rain jacket and rain boots!</div>
+                <div class="outfit-text">🧶 Chilly! Wear a warm jacket. A hat is a good idea too! 🥾 Snow boots and snow gear today!</div>
             </div>
 
             <div class="periods-section">
@@ -742,26 +384,26 @@
                 <div class="period-card">
                     <div class="period-label">🌅 Morning</div>
                     <div class="period-time">6am–12pm</div>
-                    <div class="period-icon">🌦️</div>
-                    <div class="period-temp">40°F</div>
-                    <div class="period-desc">Drizzle</div>
-                    <div class="precip">💧 58% chance of rain</div>
+                    <div class="period-icon">🌨️</div>
+                    <div class="period-temp">32°F</div>
+                    <div class="period-desc">Light snow</div>
+                    <div class="precip">❄️ 0.4 inches of snow</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">☀️ Afternoon</div>
                     <div class="period-time">12pm–6pm</div>
-                    <div class="period-icon">🌦️</div>
-                    <div class="period-temp">49°F</div>
-                    <div class="period-desc">Drizzle</div>
-                    <div class="precip">💧 38% chance of rain</div>
+                    <div class="period-icon">🌨️</div>
+                    <div class="period-temp">35°F</div>
+                    <div class="period-desc">Light snow</div>
+                    <div class="precip">❄️ 0.2 inches of snow</div>
                 </div>
                 <div class="period-card">
                     <div class="period-label">🌙 Evening</div>
                     <div class="period-time">6pm–10pm</div>
-                    <div class="period-icon">🌦️</div>
-                    <div class="period-temp">50°F</div>
-                    <div class="period-desc">Light drizzle</div>
-                    <div class="precip">💧 14% chance of rain</div>
+                    <div class="period-icon">☁️</div>
+                    <div class="period-temp">28°F</div>
+                    <div class="period-desc">Cloudy</div>
+                    <div class="precip">💧 20% chance of rain</div>
                 </div>
                 </div>
             </div>
@@ -772,120 +414,120 @@
                 <div class="hourly-scroll">
                 <div class="hour-card">
                     <div class="hour-label">6 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">36°</div>
-                    <div class="hour-precip">💧36%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">25°</div>
+                    <div class="hour-precip">💧70%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">7 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">37°</div>
-                    <div class="hour-precip">💧57%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">26°</div>
+                    <div class="hour-precip">💧75%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">8 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">38°</div>
-                    <div class="hour-precip">💧57%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">28°</div>
+                    <div class="hour-precip">💧80%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">9 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">38°</div>
-                    <div class="hour-precip">💧58%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">30°</div>
+                    <div class="hour-precip">💧75%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">10 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">39°</div>
-                    <div class="hour-precip">💧33%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">31°</div>
+                    <div class="hour-precip">💧70%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">11 AM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">40°</div>
-                    <div class="hour-precip">💧31%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">33°</div>
+                    <div class="hour-precip">💧65%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">12 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">42°</div>
-                    <div class="hour-precip">💧37%</div>
+                    <div class="hour-icon">🌨️</div>
+                    <div class="hour-temp">34°</div>
+                    <div class="hour-precip">💧60%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">1 PM</div>
                     <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">43°</div>
-                    
+                    <div class="hour-temp">35°</div>
+                    <div class="hour-precip">💧50%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">2 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">45°</div>
-                    <div class="hour-precip">💧38%</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">35°</div>
+                    <div class="hour-precip">💧40%</div>
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">3 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">45°</div>
-                    <div class="hour-precip">💧32%</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">34°</div>
+                    
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">4 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">46°</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">32°</div>
                     
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">5 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">47°</div>
-                    <div class="hour-precip">💧31%</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">30°</div>
+                    
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">6 PM</div>
-                    <div class="hour-icon">🌦️</div>
-                    <div class="hour-temp">50°</div>
+                    <div class="hour-icon">☁️</div>
+                    <div class="hour-temp">28°</div>
                     
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">7 PM</div>
                     <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">49°</div>
+                    <div class="hour-temp">26°</div>
                     
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">8 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">46°</div>
+                    <div class="hour-icon">⛅</div>
+                    <div class="hour-temp">24°</div>
                     
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">9 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">45°</div>
+                    <div class="hour-icon">⛅</div>
+                    <div class="hour-temp">22°</div>
                     
                     
                 </div>
                 <div class="hour-card">
                     <div class="hour-label">10 PM</div>
-                    <div class="hour-icon">☁️</div>
-                    <div class="hour-temp">42°</div>
+                    <div class="hour-icon">🌤️</div>
+                    <div class="hour-temp">21°</div>
                     
                     
                 </div>
@@ -898,61 +540,57 @@
                     
             <div class="day-card">
                 <div class="day-name">Sunday</div>
-                <div class="day-icon">🌦️</div>
-                <div class="day-temps"><span class="high">50°</span> / <span class="low">34°</span></div>
-                <div class="day-desc">Rain Showers</div>
-                <span class="precip-badge">🌧️ 0.1 in (58%)</span>
+                <div class="day-icon">🌨️</div>
+                <div class="day-temps"><span class="high">35°</span> / <span class="low">20°</span></div>
+                <div class="day-desc">Light Snow</div>
+                <span class="precip-badge">❄️ 0.5 in (80%)</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Monday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">44°</span> / <span class="low">28°</span></div>
-                <div class="day-desc">Mostly Sunny</div>
-                <span class="precip-badge">💧3%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">40°</span> / <span class="low">22°</span></div>
+                <div class="day-desc">Partly Cloudy</div>
+                <span class="precip-badge">💧20%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Tuesday</div>
-                <div class="day-icon">🌨️</div>
-                <div class="day-temps"><span class="high">42°</span> / <span class="low">22°</span></div>
-                <div class="day-desc">Chance Snow Showers</div>
-                <span class="precip-badge">❄️ 0.3 in (41%)</span>
+                <div class="day-icon">🌤️</div>
+                <div class="day-temps"><span class="high">45°</span> / <span class="low">28°</span></div>
+                <div class="day-desc">Mostly Sunny</div>
+                <span class="precip-badge">💧10%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Wednesday</div>
-                <div class="day-icon">🌤️</div>
-                <div class="day-temps"><span class="high">48°</span> / <span class="low">25°</span></div>
-                <div class="day-desc">Sunny</div>
-                <span class="precip-badge">💧6%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">48°</span> / <span class="low">30°</span></div>
+                <div class="day-desc">Partly Cloudy</div>
+                <span class="precip-badge">💧15%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Thursday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">57°</span> / <span class="low">32°</span></div>
+                <div class="day-icon">🌤️</div>
+                <div class="day-temps"><span class="high">52°</span> / <span class="low">32°</span></div>
                 <div class="day-desc">Mostly Sunny</div>
-                <span class="precip-badge">💧5%</span>
+                <span class="precip-badge">💧10%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Friday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">62°</span> / <span class="low">34°</span></div>
-                <div class="day-desc">Slight Chance Rain Showers then Mostly Sunny</div>
-                <span class="precip-badge">💧11%</span>
+                <div class="day-icon">⛅</div>
+                <div class="day-temps"><span class="high">55°</span> / <span class="low">34°</span></div>
+                <div class="day-desc">Some Clouds</div>
+                <span class="precip-badge">💧20%</span>
             </div>
             <div class="day-card">
                 <div class="day-name">Saturday</div>
-                <div class="day-icon">☁️</div>
-                <div class="day-temps"><span class="high">60°</span> / <span class="low">38°</span></div>
-                <div class="day-desc">Slight Chance Rain Showers</div>
-                <span class="precip-badge">💧14%</span>
+                <div class="day-icon">🌦️</div>
+                <div class="day-temps"><span class="high">50°</span> / <span class="low">32°</span></div>
+                <div class="day-desc">Chance of Showers</div>
+                <span class="precip-badge">🌧️ 0.2 in (40%)</span>
             </div>
                 </div>
             </div>
 
             
-            <div class="alerts-section">
-                <h3>🚨 Heads Up This Week!</h3>
-                <ul><li>💨 Windy on Tuesday! Winds up to 16 mph!</li><li>❄️ Maybe snow on Tuesday!</li></ul>
-            </div>
         </div>
 
         <div class="footer">
@@ -961,7 +599,6 @@
     </div>
 
     <script>
-    // WMO weather code to emoji + description (kid-friendly)
     const wmoMap = {
         0: ["Clear sky", "☀️"], 1: ["Mostly clear", "🌤️"], 2: ["Partly cloudy", "⛅"],
         3: ["Cloudy", "☁️"], 45: ["Foggy", "🌫️"], 48: ["Icy fog", "🌫️"],
@@ -994,12 +631,9 @@
                         var code = data.current.weather_code || 0;
                         var wind = Math.round(data.current.wind_speed_10m || 0);
                         var info = wmoMap[code] || ["Unknown", "🌡️"];
-
                         section.querySelector('.current-temp').textContent = temp + '°F';
                         section.querySelector('.current-icon').textContent = info[1];
                         section.querySelector('.current-desc').textContent = info[0];
-
-                        // Show or hide wind
                         var windEl = section.querySelector('.current-wind');
                         if (wind >= 15) {
                             if (!windEl) {
@@ -1013,16 +647,11 @@
                         }
                     }
                 })
-                .catch(function(e) {
-                    console.log('Weather fetch error:', e);
-                });
+                .catch(function(e) { console.log('Weather fetch error:', e); });
         });
     }
 
-    // Update on page load
     updateCurrentTemps();
-
-    // Auto-refresh every 30 minutes
     setInterval(updateCurrentTemps, 30 * 60 * 1000);
     </script>
 </body>
