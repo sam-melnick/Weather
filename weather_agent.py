@@ -12,6 +12,7 @@ import random
 import base64
 import os
 import sys
+import time
 from datetime import datetime, timedelta, timezone
 
 # ─── Configuration ──────────────────────────────────────────────────────────
@@ -74,19 +75,31 @@ OUTFIT_RULES = [
 
 # ─── Weather API Helpers ────────────────────────────────────────────────────
 
-def fetch_json(url, headers=None):
-    """Fetch a URL and return parsed JSON."""
-    req = urllib.request.Request(url)
-    req.add_header("User-Agent", "WeatherAgentForKids/1.0 (samelnick@gmail.com)")
-    if headers:
-        for k, v in headers.items():
-            req.add_header(k, v)
-    try:
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            return json.loads(resp.read().decode())
-    except Exception as e:
-        print(f"  ⚠ Failed to fetch {url}: {e}", file=sys.stderr)
-        return None
+def fetch_json(url, headers=None, retries=3, retry_delay=5):
+    """Fetch a URL and return parsed JSON. Retries on 5xx errors and timeouts."""
+    for attempt in range(1, retries + 1):
+        req = urllib.request.Request(url)
+        req.add_header("User-Agent", "WeatherAgentForKids/1.0 (samelnick@gmail.com)")
+        if headers:
+            for k, v in headers.items():
+                req.add_header(k, v)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                return json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code >= 500 and attempt < retries:
+                print(f"  ⚠ Attempt {attempt}/{retries} got HTTP {e.code} for {url} — retrying in {retry_delay}s...", file=sys.stderr)
+                time.sleep(retry_delay)
+                continue
+            print(f"  ⚠ Failed to fetch {url}: HTTP {e.code}", file=sys.stderr)
+            return None
+        except Exception as e:
+            if attempt < retries:
+                print(f"  ⚠ Attempt {attempt}/{retries} failed for {url}: {e} — retrying in {retry_delay}s...", file=sys.stderr)
+                time.sleep(retry_delay)
+                continue
+            print(f"  ⚠ Failed to fetch {url} after {retries} attempts: {e}", file=sys.stderr)
+            return None
 
 
 def fetch_open_meteo(lat, lon):
@@ -1479,6 +1492,27 @@ def main():
 
         locations_data.append({"location": loc, "data": blended})
 
+    # ── Quality gate: check if data is good enough to publish ──
+    has_hourly = False
+    has_any_data = False
+    for loc_info in locations_data:
+        data = loc_info["data"]
+        if data:
+            has_any_data = True
+            if data.get("hourly") and len(data["hourly"]) >= 3:
+                has_hourly = True
+
+    if not has_any_data:
+        print("\n🚫 NO weather data at all — both APIs failed for all locations.", file=sys.stderr)
+        print("   Skipping page generation and push to protect existing page.", file=sys.stderr)
+        print("\n❌ Done (no update).", file=sys.stderr)
+        return
+
+    page_is_degraded = not has_hourly
+    if page_is_degraded:
+        print("\n⚠️ WARNING: Hourly data is missing — page would be degraded.", file=sys.stderr)
+        print("   The hourly timeline won't show up.", file=sys.stderr)
+
     # Generate HTML
     print("\n🎨 Generating HTML page...", file=sys.stderr)
     html = generate_html(locations_data, now_est)
@@ -1489,10 +1523,15 @@ def main():
         f.write(html)
     print(f"💾 Saved to {output_path}", file=sys.stderr)
 
-    # Push to GitHub if token is available
+    # Push to GitHub if token is available — but NOT if the page is degraded
     if github_token:
-        print("\n🚀 Pushing to GitHub Pages...", file=sys.stderr)
-        push_to_github(html, github_token)
+        if page_is_degraded:
+            print("\n🛑 Skipping GitHub push — page is degraded (missing hourly data).", file=sys.stderr)
+            print("   The existing page on GitHub is better than this one.", file=sys.stderr)
+            print("   Next scheduled run will try again.", file=sys.stderr)
+        else:
+            print("\n🚀 Pushing to GitHub Pages...", file=sys.stderr)
+            push_to_github(html, github_token)
     else:
         print("\n⚠ No GITHUB_TOKEN set — skipping GitHub push.", file=sys.stderr)
         print("  Set GITHUB_TOKEN environment variable to enable auto-push.", file=sys.stderr)
