@@ -106,10 +106,14 @@ def fetch_open_meteo(lat, lon):
     """
     Fetch hourly + daily forecast from Open-Meteo.
     Returns dict with 'hourly' and 'daily' data.
+    Falls back to a request without precipitation_probability if the full request fails
+    (known issue: https://github.com/open-meteo/open-meteo/issues/1801).
     """
-    url = (
+    base = (
         f"https://api.open-meteo.com/v1/forecast?"
         f"latitude={lat}&longitude={lon}"
+    )
+    params_full = (
         f"&current=temperature_2m,weather_code,wind_speed_10m"
         f"&hourly=temperature_2m,precipitation_probability,weather_code,wind_speed_10m,precipitation,snowfall"
         f"&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_probability_max,precipitation_sum,snowfall_sum,wind_speed_10m_max,sunrise,sunset"
@@ -118,8 +122,27 @@ def fetch_open_meteo(lat, lon):
         f"&timezone=America%2FNew_York"
         f"&forecast_days=7"
     )
+    params_fallback = (
+        f"&current=temperature_2m,weather_code,wind_speed_10m"
+        f"&hourly=temperature_2m,weather_code,wind_speed_10m,precipitation,snowfall"
+        f"&daily=temperature_2m_max,temperature_2m_min,weather_code,precipitation_sum,snowfall_sum,wind_speed_10m_max,sunrise,sunset"
+        f"&temperature_unit=fahrenheit"
+        f"&wind_speed_unit=mph"
+        f"&timezone=America%2FNew_York"
+        f"&forecast_days=7"
+    )
+
     print(f"  Fetching Open-Meteo...", file=sys.stderr)
-    return fetch_json(url)
+    result = fetch_json(base + params_full)
+    if result:
+        return result
+
+    # Fallback: try without precipitation_probability (known to cause 502s)
+    print(f"  ⚠ Full request failed — retrying without precipitation_probability...", file=sys.stderr)
+    result = fetch_json(base + params_fallback)
+    if result:
+        print(f"  ✅ Fallback succeeded (no precip probability data).", file=sys.stderr)
+    return result
 
 
 def fetch_noaa_forecast(lat, lon):
