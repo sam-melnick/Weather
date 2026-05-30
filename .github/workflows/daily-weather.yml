@@ -9,7 +9,6 @@ on:
 jobs:
   update-weather:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -24,3 +23,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.WEATHER_PAT }}
           OUTPUT_PATH: index.html
         run: python weather_agent.py
+
+      - name: Keep repo active
+        run: |
+          git config user.name "weather-bot"
+          git config user.email "bot@weather.local"
+          date > .last-run
+          git add .last-run
+          git commit -m "Weather update $(date -u +%Y-%m-%d)" || true
+          git push || true
