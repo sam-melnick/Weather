@@ -2,8 +2,8 @@ name: Daily Weather Update
 
 on:
   schedule:
-    - cron: '0 8 * * *'
-    - cron: '0 16 * * *'
+    - cron: '17 8 * * *'
+    - cron: '43 16 * * *'
   workflow_dispatch:
 
 jobs:
@@ -28,6 +28,7 @@ jobs:
         run: |
           git config user.name "weather-bot"
           git config user.email "bot@weather.local"
+          git pull --rebase || true
           date > .last-run
           git add .last-run
           git commit -m "Weather update $(date -u +%Y-%m-%d)" || true
