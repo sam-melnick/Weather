@@ -1529,7 +1529,7 @@ def main():
         print("\n🚫 NO weather data at all — both APIs failed for all locations.", file=sys.stderr)
         print("   Skipping page generation and push to protect existing page.", file=sys.stderr)
         print("\n❌ Done (no update).", file=sys.stderr)
-        return
+        sys.exit(1)
 
     page_is_degraded = not has_hourly
     if page_is_degraded:
@@ -1554,7 +1554,10 @@ def main():
             print("   Next scheduled run will try again.", file=sys.stderr)
         else:
             print("\n🚀 Pushing to GitHub Pages...", file=sys.stderr)
-            push_to_github(html, github_token)
+            success = push_to_github(html, github_token)
+            if not success:
+                print("\n❌ Push failed — exiting with error.", file=sys.stderr)
+                sys.exit(1)
     else:
         print("\n⚠ No GITHUB_TOKEN set — skipping GitHub push.", file=sys.stderr)
         print("  Set GITHUB_TOKEN environment variable to enable auto-push.", file=sys.stderr)
