@@ -6,6 +6,9 @@ on:
     - cron: '43 16 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   update-weather:
     runs-on: ubuntu-latest
@@ -18,19 +21,25 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Run weather agent
-        env:
-          GITHUB_TOKEN: ${{ secrets.WEATHER_PAT }}
-          OUTPUT_PATH: index.html
+      - name: Generate weather page
+        id: generate
+        continue-on-error: true
         run: python weather_agent.py
+        env:
+          OUTPUT_PATH: index.html
 
-      - name: Keep repo active
+      - name: Commit and push
         if: always()
         run: |
           git config user.name "weather-bot"
           git config user.email "bot@weather.local"
-          git pull --rebase origin main || true
           date > .last-run
           git add .last-run
-          git commit -m "Weather update $(date -u +%Y-%m-%d)" || true
-          git push || true
+          if [ "${{ steps.generate.outcome }}" = "success" ]; then
+            git add index.html
+            echo "Adding updated weather page"
+          else
+            echo "Script failed — only pushing keepalive"
+          fi
+          git diff --cached --quiet && echo "No changes" || git commit -m "Weather $(date -u '+%Y-%m-%d %H:%M')"
+          git push
