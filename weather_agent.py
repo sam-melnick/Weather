@@ -1534,7 +1534,8 @@ def main():
     page_is_degraded = not has_hourly
     if page_is_degraded:
         print("\n⚠️ WARNING: Hourly data is missing — page would be degraded.", file=sys.stderr)
-        print("   The hourly timeline won't show up.", file=sys.stderr)
+        print("   Skipping to protect existing page.", file=sys.stderr)
+        sys.exit(1)
 
     # Generate HTML
     print("\n🎨 Generating HTML page...", file=sys.stderr)
@@ -1546,21 +1547,15 @@ def main():
         f.write(html)
     print(f"💾 Saved to {output_path}", file=sys.stderr)
 
-    # Push to GitHub if token is available — but NOT if the page is degraded
+    # Push to GitHub via API if token is available (for local runs)
     if github_token:
-        if page_is_degraded:
-            print("\n🛑 Skipping GitHub push — page is degraded (missing hourly data).", file=sys.stderr)
-            print("   The existing page on GitHub is better than this one.", file=sys.stderr)
-            print("   Next scheduled run will try again.", file=sys.stderr)
-        else:
-            print("\n🚀 Pushing to GitHub Pages...", file=sys.stderr)
-            success = push_to_github(html, github_token)
-            if not success:
-                print("\n❌ Push failed — exiting with error.", file=sys.stderr)
-                sys.exit(1)
+        print("\n🚀 Pushing to GitHub Pages...", file=sys.stderr)
+        success = push_to_github(html, github_token)
+        if not success:
+            print("\n❌ Push failed — exiting with error.", file=sys.stderr)
+            sys.exit(1)
     else:
-        print("\n⚠ No GITHUB_TOKEN set — skipping GitHub push.", file=sys.stderr)
-        print("  Set GITHUB_TOKEN environment variable to enable auto-push.", file=sys.stderr)
+        print("\n📁 No GITHUB_TOKEN — file saved locally. Workflow will handle push.", file=sys.stderr)
 
     print("\n✨ Done!", file=sys.stderr)
 
