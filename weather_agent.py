@@ -14,6 +14,9 @@ import os
 import sys
 import time
 from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
+
+ET = ZoneInfo("America/New_York")
 
 # ─── Configuration ──────────────────────────────────────────────────────────
 
@@ -320,7 +323,7 @@ def process_open_meteo(data):
     snow_cm = hourly.get("snowfall", [])
 
     # Find today's date
-    now_est = datetime.now(timezone(timedelta(hours=-5)))
+    now_est = datetime.now(ET)
     today_str = now_est.strftime("%Y-%m-%d")
 
     # Find lunchtime temp (11:00 and 12:00 hours, average them)
@@ -438,7 +441,7 @@ def process_noaa(hourly_data, daily_data):
     if not hourly_data and not daily_data:
         return None
 
-    now_est = datetime.now(timezone(timedelta(hours=-5)))
+    now_est = datetime.now(ET)
     today_str = now_est.strftime("%Y-%m-%d")
 
     result = {
@@ -1489,7 +1492,7 @@ def main():
 
     github_token = os.environ.get("GITHUB_TOKEN", "")
 
-    now_est = datetime.now(timezone(timedelta(hours=-5)))
+    now_est = datetime.now(ET)
     print(f"📅 Date: {now_est.strftime('%Y-%m-%d %H:%M %Z')}", file=sys.stderr)
 
     locations_data = []
