@@ -1,13 +1,31 @@
 name: Daily Weather Update
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Scheduling notes
+#   GitHub queues scheduled jobs and delays them — often 15-60+ min, and WORST
+#   at round times like :00 / :30 because that's when everyone schedules. So we
+#   run EARLY and on an ODD minute to dodge the crowd.
+#     '11 8  * * *'  -> 08:11 UTC = 4:11 AM ET (EDT) / 3:11 AM ET (EST)  [morning]
+#     '11 16 * * *'  -> 16:11 UTC = 12:11 PM ET (EDT) / 11:11 AM ET (EST) [midday]
+#   Even with a bad delay the morning run lands well before 6 AM ET.
+#   Cron is always UTC and does not follow daylight saving, so ET times shift
+#   by an hour between summer and winter.
+# ─────────────────────────────────────────────────────────────────────────────
 on:
   schedule:
-    - cron: '17 8 * * *'
-    - cron: '43 16 * * *'
-  workflow_dispatch:
+    - cron: '11 8 * * *'
+    - cron: '11 16 * * *'
+  workflow_dispatch: {}   # manual "Run workflow" button in the Actions tab
 
+# Let the built-in GITHUB_TOKEN push commits back to the repo. No personal
+# access token (PAT) secret required.
 permissions:
   contents: write
+
+# Never let two runs push at the same time.
+concurrency:
+  group: daily-weather
+  cancel-in-progress: false
 
 jobs:
   update-weather:
@@ -21,25 +39,21 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Generate weather page
-        id: generate
-        continue-on-error: true
-        run: python weather_agent.py
+      - name: Run weather agent
         env:
           OUTPUT_PATH: index.html
+          # No PUSH_VIA_API here: the agent only writes the file; the step
+          # below commits it. This avoids the old double-push race.
+        run: python weather_agent.py
 
-      - name: Commit and push
-        if: always()
+      - name: Commit and push updated forecast
         run: |
-          git config user.name "weather-bot"
-          git config user.email "bot@weather.local"
-          date > .last-run
-          git add .last-run
-          if [ "${{ steps.generate.outcome }}" = "success" ]; then
-            git add index.html
-            echo "Adding updated weather page"
+          git config user.name "Weather Bot"
+          git config user.email "weather-bot@users.noreply.github.com"
+          git add index.html
+          if git diff --staged --quiet; then
+            echo "No changes to commit."
           else
-            echo "Script failed — only pushing keepalive"
+            git commit -m "Update weather forecast - $(date -u +'%Y-%m-%d %H:%M UTC')"
+            git push
           fi
-          git diff --cached --quiet && echo "No changes" || git commit -m "Weather $(date -u '+%Y-%m-%d %H:%M')"
-          git push
