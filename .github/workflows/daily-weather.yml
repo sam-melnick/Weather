@@ -1,28 +1,26 @@
 name: Daily Weather Update
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Scheduling notes
-#   GitHub queues scheduled jobs and delays them — often 15-60+ min, and WORST
-#   at round times like :00 / :30 because that's when everyone schedules. So we
-#   run EARLY and on an ODD minute to dodge the crowd.
-#     '11 8  * * *'  -> 08:11 UTC = 4:11 AM ET (EDT) / 3:11 AM ET (EST)  [morning]
-#     '11 16 * * *'  -> 16:11 UTC = 12:11 PM ET (EDT) / 11:11 AM ET (EST) [midday]
-#   Even with a bad delay the morning run lands well before 6 AM ET.
-#   Cron is always UTC and does not follow daylight saving, so ET times shift
-#   by an hour between summer and winter.
+# How this gets triggered
+#   1. PRIMARY: cron-job.org calls GitHub's "workflow_dispatch" API at
+#      5:30 AM and 6:30 AM ET. Dispatch runs start within seconds, unlike
+#      GitHub's own schedule, which has been running 5-9 hours late.
+#      See SETUP_MORNING_TRIGGER.md for the setup.
+#   2. BACKUP: the GitHub schedule below. Unreliable timing, but harmless.
+#   3. MANUAL: the "Run workflow" button in the Actions tab.
+# Cron times are UTC and don't follow daylight saving.
 # ─────────────────────────────────────────────────────────────────────────────
 on:
   schedule:
-    - cron: '11 8 * * *'
-    - cron: '11 16 * * *'
-  workflow_dispatch: {}   # manual "Run workflow" button in the Actions tab
+    - cron: '11 8 * * *'    # ~4:11 AM EDT / 3:11 AM EST (often late)
+    - cron: '11 16 * * *'   # ~12:11 PM EDT / 11:11 AM EST
+  workflow_dispatch: {}
 
-# Let the built-in GITHUB_TOKEN push commits back to the repo. No personal
-# access token (PAT) secret required.
+# Built-in GITHUB_TOKEN pushes the commit. No personal token needed here.
 permissions:
   contents: write
 
-# Never let two runs push at the same time.
+# Never let two runs push at the same time (e.g. cron-job.org + schedule).
 concurrency:
   group: daily-weather
   cancel-in-progress: false
@@ -30,26 +28,26 @@ concurrency:
 jobs:
   update-weather:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: '3.11'
 
       - name: Run weather agent
         env:
           OUTPUT_PATH: index.html
-          # No PUSH_VIA_API here: the agent only writes the file; the step
-          # below commits it. This avoids the old double-push race.
         run: python weather_agent.py
 
       - name: Commit and push updated forecast
         run: |
           git config user.name "Weather Bot"
           git config user.email "weather-bot@users.noreply.github.com"
+          git pull --rebase --quiet || true
           git add index.html
           if git diff --staged --quiet; then
             echo "No changes to commit."
